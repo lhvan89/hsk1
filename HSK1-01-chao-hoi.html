@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HSK 1 - Chủ đề 1: Chào hỏi và giao tiếp cơ bản</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#f5f5f7;color:#1d1d1f;line-height:1.5;padding:20px 16px 60px}
+    .container{max-width:680px;margin:0 auto}
+    h1{font-size:24px;font-weight:700;margin-bottom:6px}
+    .subtitle{font-size:14px;color:#6e6e73;margin-bottom:20px}
+    .topic-card{background:#fff;border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;margin-bottom:18px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+    .topic-card .icon{width:48px;height:48px;border-radius:10px;background:#d4e8ff;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+    .topic-card p{font-size:14px;line-height:1.45}
+    .sentence-card{background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:8px;box-shadow:0 1px 2px rgba(0,0,0,.04);position:relative}
+    .play-btn{position:absolute;bottom:8px;right:8px;width:36px;height:36px;border:none;background:transparent;color:#8e8e93;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s;border-radius:50%;-webkit-tap-highlight-color:transparent}
+    .play-btn:active{transform:scale(.9)}
+    .play-btn.playing{color:#8e8e93}
+    .content{padding-right:40px}
+    .sentence-label{font-size:11px;font-weight:600;color:#8e8e93;letter-spacing:.4px;margin-bottom:6px;text-transform:uppercase}
+    .hanzi{font-size:22px;font-weight:500;margin-bottom:3px;line-height:1.35}
+    .pinyin{font-size:14.5px;color:#6e6e73;margin-bottom:2px}
+    .meaning{font-size:14.5px}
+    .footer{text-align:center;margin-top:36px;font-size:13px;color:#8e8e93}
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>1. Chào hỏi và giao tiếp cơ bản</h1>
+  <p class="subtitle">HSK 1 · Có âm thanh · Chữ Hán · Pinyin · Nghĩa tiếng Việt</p>
+  <div class="topic-card">
+    <div class="icon">👋</div>
+    <p>Chủ đề 1: chào hỏi, cảm ơn, xin lỗi, tạm biệt và các câu xã giao cơ bản.</p>
+  </div>
+
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/你好.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 1</div><div class="hanzi">你好！</div><div class="pinyin">Nǐ hǎo!</div><div class="meaning">Xin chào!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/你好吗.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 2</div><div class="hanzi">你好吗？</div><div class="pinyin">Nǐ hǎo ma?</div><div class="meaning">Bạn khỏe không?</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/我很好.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 3</div><div class="hanzi">我很好。</div><div class="pinyin">Wǒ hěn hǎo.</div><div class="meaning">Tôi rất khỏe.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/你呢.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 4</div><div class="hanzi">你呢？</div><div class="pinyin">Nǐ ne?</div><div class="meaning">Còn bạn thì sao?</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/我也很好.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 5</div><div class="hanzi">我也很好。</div><div class="pinyin">Wǒ yě hěn hǎo.</div><div class="meaning">Tôi cũng rất khỏe.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/谢谢.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 6</div><div class="hanzi">谢谢！</div><div class="pinyin">Xièxie!</div><div class="meaning">Cảm ơn!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/谢谢你.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 7</div><div class="hanzi">谢谢你。</div><div class="pinyin">Xièxie nǐ.</div><div class="meaning">Cảm ơn bạn.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/不客气.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 8</div><div class="hanzi">不客气。</div><div class="pinyin">Bú kèqi.</div><div class="meaning">Không có gì.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/不用谢.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 9</div><div class="hanzi">不用谢。</div><div class="pinyin">Bú yòng xiè.</div><div class="meaning">Không cần cảm ơn.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/对不起.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 10</div><div class="hanzi">对不起。</div><div class="pinyin">Duìbuqǐ.</div><div class="meaning">Xin lỗi.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/没关系.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 11</div><div class="hanzi">没关系。</div><div class="pinyin">Méi guānxi.</div><div class="meaning">Không sao.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/再见.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 12</div><div class="hanzi">再见！</div><div class="pinyin">Zàijiàn!</div><div class="meaning">Tạm biệt!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/明天见.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 13</div><div class="hanzi">明天见！</div><div class="pinyin">Míngtiān jiàn!</div><div class="meaning">Mai gặp nhé!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/早上好.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 14</div><div class="hanzi">早上好！</div><div class="pinyin">Zǎoshang hǎo!</div><div class="meaning">Chào buổi sáng!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/下午好.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 15</div><div class="hanzi">下午好！</div><div class="pinyin">Xiàwǔ hǎo!</div><div class="meaning">Chào buổi chiều!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/晚上好.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 16</div><div class="hanzi">晚上好！</div><div class="pinyin">Wǎnshang hǎo!</div><div class="meaning">Chào buổi tối!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/晚安.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 17</div><div class="hanzi">晚安！</div><div class="pinyin">Wǎn'ān!</div><div class="meaning">Chúc ngủ ngon!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/大家好.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 18</div><div class="hanzi">大家好！</div><div class="pinyin">Dàjiā hǎo!</div><div class="meaning">Chào mọi người!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/老师好.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 19</div><div class="hanzi">老师好！</div><div class="pinyin">Lǎoshī hǎo!</div><div class="meaning">Chào thầy/cô!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/同学好.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 20</div><div class="hanzi">同学好！</div><div class="pinyin">Tóngxué hǎo!</div><div class="meaning">Chào các bạn!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/您好.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 21</div><div class="hanzi">您好！</div><div class="pinyin">Nín hǎo!</div><div class="meaning">Xin chào (lịch sự)!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/很高兴认识你.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 22</div><div class="hanzi">很高兴认识你。</div><div class="pinyin">Hěn gāoxìng rènshi nǐ.</div><div class="meaning">Rất vui được làm quen với bạn.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/我也是.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 23</div><div class="hanzi">我也是。</div><div class="pinyin">Wǒ yě shì.</div><div class="meaning">Tôi cũng vậy.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/好久不见.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 24</div><div class="hanzi">好久不见！</div><div class="pinyin">Hǎo jiǔ bú jiàn!</div><div class="meaning">Lâu rồi không gặp!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/最近怎么样.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 25</div><div class="hanzi">最近怎么样？</div><div class="pinyin">Zuìjìn zěnmeyàng?</div><div class="meaning">Dạo này thế nào?</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/还不错.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 26</div><div class="hanzi">还不错。</div><div class="pinyin">Hái búcuò.</div><div class="meaning">Cũng ổn.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/请坐.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 27</div><div class="hanzi">请坐。</div><div class="pinyin">Qǐng zuò.</div><div class="meaning">Mời ngồi.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/请进.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 28</div><div class="hanzi">请进。</div><div class="pinyin">Qǐng jìn.</div><div class="meaning">Mời vào.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/请等一下.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 29</div><div class="hanzi">请等一下。</div><div class="pinyin">Qǐng děng yíxià.</div><div class="meaning">Xin đợi một chút.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/请慢一点.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 30</div><div class="hanzi">请慢一点。</div><div class="pinyin">Qǐng màn yìdiǎn.</div><div class="meaning">Xin nói chậm một chút.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/请再说一遍.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 31</div><div class="hanzi">请再说一遍。</div><div class="pinyin">Qǐng zài shuō yí biàn.</div><div class="meaning">Xin nói lại một lần.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/我不懂.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 32</div><div class="hanzi">我不懂。</div><div class="pinyin">Wǒ bù dǒng.</div><div class="meaning">Tôi không hiểu.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/听不懂.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 33</div><div class="hanzi">听不懂。</div><div class="pinyin">Tīng bù dǒng.</div><div class="meaning">Nghe không hiểu.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/可以说慢一点吗.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 34</div><div class="hanzi">可以说慢一点吗？</div><div class="pinyin">Kěyǐ shuō màn yìdiǎn ma?</div><div class="meaning">Có thể nói chậm hơn không?</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/可以.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 35</div><div class="hanzi">可以。</div><div class="pinyin">Kěyǐ.</div><div class="meaning">Được.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/不可以.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 36</div><div class="hanzi">不可以。</div><div class="pinyin">Bù kěyǐ.</div><div class="meaning">Không được.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/没问题.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 37</div><div class="hanzi">没问题。</div><div class="pinyin">Méi wèntí.</div><div class="meaning">Không vấn đề gì.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/当然可以.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 38</div><div class="hanzi">当然可以。</div><div class="pinyin">Dāngrán kěyǐ.</div><div class="meaning">Tất nhiên được.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/好的.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 39</div><div class="hanzi">好的。</div><div class="pinyin">Hǎo de.</div><div class="meaning">Được rồi. / Ok.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/知道了.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 40</div><div class="hanzi">知道了。</div><div class="pinyin">Zhīdào le.</div><div class="meaning">Biết rồi.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/我知道.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 41</div><div class="hanzi">我知道。</div><div class="pinyin">Wǒ zhīdào.</div><div class="meaning">Tôi biết.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/我不知道.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 42</div><div class="hanzi">我不知道。</div><div class="pinyin">Wǒ bù zhīdào.</div><div class="meaning">Tôi không biết.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/请问.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 43</div><div class="hanzi">请问……</div><div class="pinyin">Qǐngwèn…</div><div class="meaning">Xin hỏi…</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/对不起我迟到了.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 44</div><div class="hanzi">对不起，我迟到了。</div><div class="pinyin">Duìbuqǐ, wǒ chídào le.</div><div class="meaning">Xin lỗi, tôi đến muộn.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/没关系没事.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 45</div><div class="hanzi">没关系，没事。</div><div class="pinyin">Méi guānxi, méishì.</div><div class="meaning">Không sao, không việc gì.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/辛苦了.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 46</div><div class="hanzi">辛苦了。</div><div class="pinyin">Xīnkǔ le.</div><div class="meaning">Vất vả rồi.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/加油.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 47</div><div class="hanzi">加油！</div><div class="pinyin">Jiāyóu!</div><div class="meaning">Cố lên!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/祝你成功.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 48</div><div class="hanzi">祝你成功！</div><div class="pinyin">Zhù nǐ chénggōng!</div><div class="meaning">Chúc bạn thành công!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/祝你幸福.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 49</div><div class="hanzi">祝你幸福！</div><div class="pinyin">Zhù nǐ xìngfú!</div><div class="meaning">Chúc bạn hạnh phúc!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/祝你生日快乐.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 50</div><div class="hanzi">祝你生日快乐！</div><div class="pinyin">Zhù nǐ shēngrì kuàilè!</div><div class="meaning">Chúc bạn sinh nhật vui vẻ!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/恭喜你.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 51</div><div class="hanzi">恭喜你！</div><div class="pinyin">Gōngxǐ nǐ!</div><div class="meaning">Chúc mừng bạn!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/太好了.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 52</div><div class="hanzi">太好了！</div><div class="pinyin">Tài hǎo le!</div><div class="meaning">Tuyệt quá!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/真棒.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 53</div><div class="hanzi">真棒！</div><div class="pinyin">Zhēn bàng!</div><div class="meaning">Thật tuyệt!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/没问题我可以帮你.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 54</div><div class="hanzi">没问题，我可以帮你。</div><div class="pinyin">Méi wèntí, wǒ kěyǐ bāng nǐ.</div><div class="meaning">Không vấn đề, tôi có thể giúp bạn.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/谢谢你的帮助.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 55</div><div class="hanzi">谢谢你的帮助。</div><div class="pinyin">Xièxie nǐ de bāngzhù.</div><div class="meaning">Cảm ơn sự giúp đỡ của bạn.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/不客气应该的.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 56</div><div class="hanzi">不客气，应该的。</div><div class="pinyin">Bú kèqi, yīnggāi de.</div><div class="meaning">Không có gì, đó là việc nên làm.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/你先请.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 57</div><div class="hanzi">你先请。</div><div class="pinyin">Nǐ xiān qǐng.</div><div class="meaning">Mời bạn trước.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/请这边走.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 58</div><div class="hanzi">请这边走。</div><div class="pinyin">Qǐng zhè biān zǒu.</div><div class="meaning">Mời đi phía này.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/小心一点.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 59</div><div class="hanzi">小心一点。</div><div class="pinyin">Xiǎoxīn yìdiǎn.</div><div class="meaning">Cẩn thận một chút.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/注意安全.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 60</div><div class="hanzi">注意安全。</div><div class="pinyin">Zhùyì ānquán.</div><div class="meaning">Chú ý an toàn.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/路上小心.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 61</div><div class="hanzi">路上小心。</div><div class="pinyin">Lùshang xiǎoxīn.</div><div class="meaning">Đi đường cẩn thận.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/保重身体.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 62</div><div class="hanzi">保重身体。</div><div class="pinyin">Bǎozhòng shēntǐ.</div><div class="meaning">Giữ gìn sức khỏe.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/多保重.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 63</div><div class="hanzi">多保重。</div><div class="pinyin">Duō bǎozhòng.</div><div class="meaning">Bảo trọng nhiều nhé.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/下次见.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 64</div><div class="hanzi">下次见！</div><div class="pinyin">Xià cì jiàn!</div><div class="meaning">Lần sau gặp lại!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/有空再聊.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 65</div><div class="hanzi">有空再聊。</div><div class="pinyin">Yǒu kòng zài liáo.</div><div class="meaning">Có rảnh nói chuyện tiếp nhé.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/保持联系.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 66</div><div class="hanzi">保持联系。</div><div class="pinyin">Bǎochí liánxì.</div><div class="meaning">Giữ liên lạc nhé.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/欢迎你.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 67</div><div class="hanzi">欢迎你！</div><div class="pinyin">Huānyíng nǐ!</div><div class="meaning">Hoan nghênh bạn!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/欢迎来到中国.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 68</div><div class="hanzi">欢迎来到中国。</div><div class="pinyin">Huānyíng lái dào Zhōngguó.</div><div class="meaning">Chào mừng đến Trung Quốc.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/欢迎来到越南.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 69</div><div class="hanzi">欢迎来到越南。</div><div class="pinyin">Huānyíng lái dào Yuènán.</div><div class="meaning">Chào mừng đến Việt Nam.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/这是我的名片.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 70</div><div class="hanzi">这是我的名片。</div><div class="pinyin">Zhè shì wǒ de míngpiàn.</div><div class="meaning">Đây là danh thiếp của tôi.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/请多关照.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 71</div><div class="hanzi">请多关照。</div><div class="pinyin">Qǐng duō guānzhào.</div><div class="meaning">Xin hãy chiếu cố nhiều.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/请多指教.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 72</div><div class="hanzi">请多指教。</div><div class="pinyin">Qǐng duō zhǐjiào.</div><div class="meaning">Xin hãy chỉ giáo nhiều.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/不好意思.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 73</div><div class="hanzi">不好意思。</div><div class="pinyin">Bù hǎoyìsi.</div><div class="meaning">Xin lỗi / Ngại quá.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/真对不起.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 74</div><div class="hanzi">真对不起。</div><div class="pinyin">Zhēn duìbuqǐ.</div><div class="meaning">Thật xin lỗi.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/没事没事.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 75</div><div class="hanzi">没事没事。</div><div class="pinyin">Méishì méishì.</div><div class="meaning">Không sao không sao.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/太感谢了.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 76</div><div class="hanzi">太感谢了！</div><div class="pinyin">Tài gǎnxiè le!</div><div class="meaning">Cảm ơn quá!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/非常感谢.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 77</div><div class="hanzi">非常感谢！</div><div class="pinyin">Fēicháng gǎnxiè!</div><div class="meaning">Cảm ơn rất nhiều!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/我帮你.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 78</div><div class="hanzi">我帮你。</div><div class="pinyin">Wǒ bāng nǐ.</div><div class="meaning">Tôi giúp bạn.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/需要帮助吗.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 79</div><div class="hanzi">需要帮助吗？</div><div class="pinyin">Xūyào bāngzhù ma?</div><div class="meaning">Cần giúp đỡ không?</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/需要帮忙吗.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 80</div><div class="hanzi">需要帮忙吗？</div><div class="pinyin">Xūyào bāngmáng ma?</div><div class="meaning">Cần giúp không?</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/不用了谢谢.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 81</div><div class="hanzi">不用了，谢谢。</div><div class="pinyin">Bú yòng le, xièxie.</div><div class="meaning">Không cần đâu, cảm ơn.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/好的谢谢.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 82</div><div class="hanzi">好的，谢谢。</div><div class="pinyin">Hǎo de, xièxie.</div><div class="meaning">Được rồi, cảm ơn.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/再见路上小心.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 83</div><div class="hanzi">再见，路上小心。</div><div class="pinyin">Zàijiàn, lùshang xiǎoxīn.</div><div class="meaning">Tạm biệt, đi đường cẩn thận.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/拜拜.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 84</div><div class="hanzi">拜拜！</div><div class="pinyin">Bàibài!</div><div class="meaning">Bye bye!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/回头见.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 85</div><div class="hanzi">回头见！</div><div class="pinyin">Huítóu jiàn!</div><div class="meaning">Gặp lại sau!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/一会儿见.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 86</div><div class="hanzi">一会儿见。</div><div class="pinyin">Yíhuìr jiàn.</div><div class="meaning">Lát nữa gặp.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/周末见.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 87</div><div class="hanzi">周末见！</div><div class="pinyin">Zhōumò jiàn!</div><div class="meaning">Cuối tuần gặp nhé!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/你先走吧.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 88</div><div class="hanzi">你先走吧。</div><div class="pinyin">Nǐ xiān zǒu ba.</div><div class="meaning">Bạn đi trước đi.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/我先走了.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 89</div><div class="hanzi">我先走了。</div><div class="pinyin">Wǒ xiān zǒu le.</div><div class="meaning">Tôi đi trước đây.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/慢走.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 90</div><div class="hanzi">慢走！</div><div class="pinyin">Màn zǒu!</div><div class="meaning">Đi chậm nhé!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/请多保重.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 91</div><div class="hanzi">请多保重。</div><div class="pinyin">Qǐng duō bǎozhòng.</div><div class="meaning">Xin hãy bảo trọng.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/有空来玩.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 92</div><div class="hanzi">有空来玩。</div><div class="pinyin">Yǒu kòng lái wán.</div><div class="meaning">Có rảnh đến chơi nhé.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/一定来.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 93</div><div class="hanzi">一定来！</div><div class="pinyin">Yídìng lái!</div><div class="meaning">Nhất định đến!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/欢迎再来.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 94</div><div class="hanzi">欢迎再来。</div><div class="pinyin">Huānyíng zài lái.</div><div class="meaning">Hoan nghênh đến lại.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/下次再聊.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 95</div><div class="hanzi">下次再聊。</div><div class="pinyin">Xià cì zài liáo.</div><div class="meaning">Lần sau nói chuyện tiếp.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/今天很高兴认识你.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 96</div><div class="hanzi">今天很高兴认识你。</div><div class="pinyin">Jīntiān hěn gāoxìng rènshi nǐ.</div><div class="meaning">Hôm nay rất vui được biết bạn.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/希望下次再见面.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 97</div><div class="hanzi">希望下次再见面。</div><div class="pinyin">Xīwàng xià cì zài jiànmiàn.</div><div class="meaning">Hy vọng lần sau gặp lại.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/请多关照我.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 98</div><div class="hanzi">请多关照我。</div><div class="pinyin">Qǐng duō guānzhào wǒ.</div><div class="meaning">Xin hãy chiếu cố tôi nhiều.</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/大家辛苦了.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 99</div><div class="hanzi">大家辛苦了！</div><div class="pinyin">Dàjiā xīnkǔ le!</div><div class="meaning">Mọi người vất vả rồi!</div></div></div>
+  <div class="sentence-card"><button class="play-btn" onclick="playAudio(this, 'audio/谢谢大家.mp3')" title="Phát âm">🔊</button><div class="content"><div class="sentence-label">Mẫu câu 100</div><div class="hanzi">谢谢大家！</div><div class="pinyin">Xièxie dàjiā!</div><div class="meaning">Cảm ơn mọi người!</div></div></div>
+
+  <div class="footer">HSK 1 · Chủ đề 1/10 · Chào hỏi và giao tiếp cơ bản</div>
+</div>
+
+
+<script>
+  let currentAudio = null;
+  let currentBtn = null;
+  function playAudio(btn, src) {
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      if (currentBtn) {
+        currentBtn.classList.remove('playing');
+        currentBtn.innerHTML = '🔊';
+      }
+    }
+    const audio = new Audio(src);
+    currentAudio = audio;
+    currentBtn = btn;
+    btn.classList.add('playing');
+    btn.innerHTML = '⏸';
+    audio.play().catch(err => {
+      btn.classList.remove('playing');
+      btn.innerHTML = '🔊';
+      alert('Không tìm thấy file âm thanh:\n' + src + '\n\nHãy đặt file MP3 cùng thư mục với file HTML này.');
+    });
+    audio.onended = function() {
+      btn.classList.remove('playing');
+      btn.innerHTML = '🔊';
+      currentAudio = null;
+      currentBtn = null;
+    };
+  }
+</script>
+
+</body>
+</html>

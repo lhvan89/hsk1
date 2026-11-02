@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HSK 1 - Luyện từ vựng</title>
+<!-- Nhúng thư viện Hanzi Writer từ CDN -->
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5.0/dist/hanzi-writer.min.js"></script>
 <style>
 :root{--blue:#2563eb;--dark:#172554;--muted:#64748b;--bg:#f3f6fc;--green:#16a34a;--red:#dc2626}
 *{box-sizing:border-box}
@@ -27,8 +29,26 @@ main{padding:25px}
 .answer:disabled{cursor:default}
 .cn{font-size:27px;font-weight:bold;display:block;color:#172554}.py{font-size:13px;color:var(--muted);display:block;margin-top:5px}
 .answer.correct{border-color:#22c55e;background:#f0fdf4}.answer.wrong{border-color:#ef4444;background:#fef2f2}
-.feedback{display:none;margin-top:16px;border-radius:13px;padding:14px 16px;line-height:1.5}
+.feedback{display:none;margin-top:16px;border-radius:13px;padding:14px 16px;line-height:1.6}
 .feedback.show{display:block}.feedback.good{background:#f0fdf4;color:#166534}.feedback.bad{background:#fef2f2;color:#991b1b}
+.options-summary{margin-top:8px;font-size:13px;opacity:0.95;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.summary-item{cursor:pointer;padding:2px 6px;border-radius:6px;background:rgba(0,0,0,0.05);transition:background 0.15s;}
+.summary-item:hover{background:rgba(0,0,0,0.12);text-decoration:underline;}
+
+/* Modal Popup Styles */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:none;place-items:center;z-index:1000;padding:15px}
+.modal-overlay.show{display:grid}
+.modal-content{background:white;border-radius:20px;padding:25px;width:min(400px, 100%);text-align:center;box-shadow:0 20px 40px rgba(0,0,0,0.2);position:relative;animation:modalIn 0.2s ease-out}
+@keyframes modalIn{from{transform:scale(0.9);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-close{position:absolute;top:12px;right:15px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted)}
+.modal-title{font-size:20px;font-weight:bold;color:var(--dark);margin-bottom:5px}
+.modal-py{color:var(--muted);font-size:14px;margin-bottom:15px}
+.writer-container{display:flex;justify-content:center;align-items:center;gap:10px;margin:15px 0;min-height:160px;flex-wrap:wrap;}
+.writer-box{border:2px dashed #e2e8f0;border-radius:12px;padding:10px;background:#f8fafc;display:inline-block;position:relative;}
+.modal-actions{display:flex;gap:8px;justify-content:center;margin-top:15px}
+.modal-btn{background:#eef2ff;color:#3730a3;border:none;border-radius:8px;padding:8px 14px;font-weight:bold;font-size:13px;cursor:pointer;transition:background 0.15s}
+.modal-btn:hover{background:#e0e7ff}
+
 .actions{display:flex;gap:10px;margin-top:18px}
 button.primary,button.secondary{border:0;border-radius:12px;padding:14px 18px;font-size:15px;font-weight:bold;cursor:pointer}
 .primary{background:var(--blue);color:white;flex:1}.primary:hover{background:#1d4ed8}.secondary{background:#eef2ff;color:#3730a3}
@@ -62,6 +82,21 @@ footer{text-align:center;color:#94a3b8;font-size:12px;padding:0 20px 20px}
 </main>
 <footer>Ôn tập từ vựng HSK 1 · Học đều mỗi ngày nhé!</footer>
 </div>
+
+<!-- Modal Popup Vẽ Chữ Hán -->
+<div class="modal-overlay" id="strokeModal">
+ <div class="modal-content">
+  <button class="modal-close" id="closeModal">&times;</button>
+  <div class="modal-title" id="modalHanziTitle"></div>
+  <div class="modal-py" id="modalHanziPy"></div>
+  <div class="writer-container" id="writerContainer"></div>
+  <div class="modal-actions">
+   <button class="modal-btn" id="animateBtn">▶ Vẽ lại</button>
+   <button class="modal-btn" id="quizBtn">✏️ Tập viết</button>
+  </div>
+ </div>
+</div>
+
 <script>
 const words = [
 ["我","wǒ","tôi"],["你","nǐ","bạn"],["他","tā","anh ấy"],["她","tā","cô ấy"],["我们","wǒmen","chúng tôi / chúng ta"],["人","rén","người"],["名字","míngzi","tên"],["老师","lǎoshī","giáo viên"],["学生","xuésheng","học sinh"],["同学","tóngxué","bạn học"],["朋友","péngyou","bạn bè"],["先生","xiānsheng","ông / ngài"],["小姐","xiǎojiě","cô / tiểu thư"],["爸爸","bàba","bố"],["妈妈","māma","mẹ"],["儿子","érzi","con trai"],["女儿","nǚ'ér","con gái"],["家","jiā","nhà / gia đình"],["中国","Zhōngguó","Trung Quốc"],["北京","Běijīng","Bắc Kinh"],
@@ -69,29 +104,108 @@ const words = [
 ["水","shuǐ","nước"],["茶","chá","trà"],["米饭","mǐfàn","cơm"],["菜","cài","món ăn / rau"],["水果","shuǐguǒ","trái cây"],["苹果","píngguǒ","táo"],["东西","dōngxi","đồ vật"],["钱","qián","tiền"],["书","shū","sách"],["汉语","Hànyǔ","tiếng Trung"],["字","zì","chữ"],["电脑","diànnǎo","máy tính"],["电视","diànshì","tivi"],["电影","diànyǐng","phim"],["衣服","yīfu","quần áo"],["桌子","zhuōzi","cái bàn"],["椅子","yǐzi","cái ghế"],["杯子","bēizi","cái cốc"],["学校","xuéxiào","trường học"],["医院","yīyuàn","bệnh viện"],["商店","shāngdiàn","cửa hàng"],["饭店","fàndiàn","nhà hàng"],["飞机","fēijī","máy bay"],["出租车","chūzūchē","taxi"],["天气","tiānqì","thời tiết"],["猫","māo","mèo"],["狗","gǒu","chó"],
 ["大","dà","to / lớn"],["小","xiǎo","nhỏ"],["多","duō","nhiều"],["少","shǎo","ít"],["好","hǎo","tốt"],["坏","huài","xấu"],["热","rè","nóng"],["冷","lěng","lạnh"],["高兴","gāoxìng","vui vẻ"],["漂亮","piàoliang","xinh đẹp"],["忙","máng","bận"],["累","lèi","mệt"],["快","kuài","nhanh"],["慢","màn","chậm"],["远","yuǎn","xa"],["近","jìn","gần"],["贵","guì","đắt"],["便宜","piányi","rẻ"],["好吃","hǎochī","ngon"],["漂亮","piàoliang","đẹp"],
 ["一","yī","một"],["二","èr","hai"],["三","sān","ba"],["四","sì","bốn"],["五","wǔ","năm"],["六","liù","sáu"],["七","qī","bảy"],["八","bā","tám"],["九","jiǔ","chín"],["十","shí","mười"],["零","líng","số không"],["个","gè","lượng từ phổ biến"],["岁","suì","tuổi"],["年","nián","năm"],["月","yuè","tháng"],["日","rì","ngày"],["今天","jīntiān","hôm nay"],["明天","míngtiān","ngày mai"],["昨天","zuótiān","hôm qua"],["现在","xiànzài","bây giờ"],["时候","shíhou","thời điểm"],["上午","shàngwǔ","buổi sáng"],["中午","zhōngwǔ","buổi trưa"],["下午","xiàwǔ","buổi chiều"],["点","diǎn","giờ"],["分钟","fēnzhōng","phút"],["星期","xīngqī","tuần / thứ"],["星期一","xīngqīyī","thứ Hai"],["星期日","xīngqīrì","Chủ nhật"],["今年","jīnnián","năm nay"],["明年","míngnián","năm sau"],
-["怎么","zěnme","như thế nào"],["怎么样","zěnmeyàng","thế nào"],["什么","shénme","cái gì"],["谁","shéi","ai"],["哪","nǎ","nào"],["哪儿","nǎr","ở đâu"],["几","jǐ","mấy / bao nhiêu"],["多少","duōshao","bao nhiêu"],["为什么","wèishénme","tại sao"],["吗","ma","trợ từ nghi vấn"],["呢","ne","trợ từ hỏi tiếp"],["的","de","trợ từ sở hữu"],["了","le","trợ từ hoàn thành"],["和","hé","và"],["都","dōu","đều"],["也","yě","cũng"],["很","hěn","rất"],["太","tài","quá"],["不","bù","không"],["没","méi","không / chưa"],["这","zhè","đây / này"],["那","nà","kia / đó"],["些","xiē","một vài"],["一点儿","yìdiǎnr","một chút"],["再","zài","lại / nữa"],["请问","qǐngwèn","xin hỏi"],["时候","shíhou","lúc / thời gian"],["上","shàng","trên"],["下","xià","dưới"],["前面","qiánmiàn","phía trước"],["后面","hòumiàn","phía sau"],["里","lǐ","bên trong"],["旁边","pángbiān","bên cạnh"],["和","hé","và"],["吧","ba","nhé / đi"],["坐","zuò","ngồi / đi (xe)"],["开","kāi","mở / lái"],["睡觉","shuìjiào","ngủ"],["下雨","xiàyǔ","mưa"],["冷","lěng","lạnh"],["医生","yīshēng","bác sĩ"],["出租车","chūzūchē","xe taxi"],["分钟","fēnzhōng","phút"],["本","běn","lượng từ sách"],["些","xiē","một vài"],["没有","méiyǒu","không có"]
+["怎么","zěnme","như thế nào"],["怎么样","zěnmeyàng","thế nào"],["什么","shénme","cái gì"],["谁","shéi","ai"],["哪","nǎ","nào"],["哪儿","nǎr","ở đâu"],["几","jǐ","mấy / bao nhiêu"],["多少","duōshao","bao nhiêu"],["为什么","wèishénme","tại sao"],["吗","ma","trợ từ nghi vấn"],["呢","ne","trợ từ hỏi tiếp"],["的","de","trợ từ sở hữu"],["了","le","trợ từ hoàn thành"],["和","hé","và"],["都","dōu","đều"],["也","yě","cũng"],["很","hěn","رất"],["太","tài","quá"],["不","bù","không"],["没","méi","không / chưa"],["这","zhè","đây / này"],["那","nà","kia / đó"],["些","xiē","một vài"],["一点儿","yìdiǎnr","một chút"],["再","zài","lại / nữa"],["请问","qǐngwèn","xin hỏi"],["时候","shíhou","lúc / thời gian"],["上","shàng","trên"],["下","xià","dưới"],["前面","qiánmiàn","phía trước"],["后面","hòumiàn","phía sau"],["里","lǐ","bên trong"],["旁边","pángbiān","bên cạnh"],["和","hé","và"],["吧","ba","nhé / đi"],["坐","zuò","ngồi / đi (xe)"],["开","kāi","mở / lái"],["睡觉","shuìjiào","ngủ"],["下雨","xiàyǔ","mưa"],["冷","lěng","lạnh"],["医生","yīshēng","bác sĩ"],["出租车","chūzūchē","xe taxi"],["分钟","fēnzhōng","phút"],["本","běn","lượng từ sách"],["些","xiē","một vài"],["没有","méiyǒu","không có"]
 ];
+
 // Gộp từ trùng, giữ mục đầu tiên để đáp án không bị lặp.
 const unique=[...new Map(words.map(w=>[w[0],w])).values()];
-let deck=[],index=0,score=0,right=0,streak=0,answered=0,current=null,locked=false;
+let deck=[],index=0,score=0,right=0,streak=0,answered=0,current=null,locked=false, currentOpts=[];
+let activeWriters = [];
 const $=id=>document.getElementById(id);
+
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function start(){let n=+$("count").value;deck=shuffle(unique).slice(0,Math.min(n,unique.length));index=score=right=streak=answered=0;$("score").textContent=0;$("right").textContent=0;$("streak").textContent=0;$("game").style.display="block";$("result").style.display="none";render()}
 function render(){
  if(index>=deck.length){finish();return}
  locked=false;current=deck[index];$("counter").textContent=`Câu ${index+1} / ${deck.length}`;$("accuracy").textContent=`Chính xác: ${answered?Math.round(right/answered*100):0}%`;$("progress").style.width=(index/deck.length*100)+"%";
- $("meaning").textContent=current[2];$("hint").textContent="Chọn từ tiếng Trung có nghĩa tương ứng";$("feedback").className="feedback";$("feedback").textContent="";$("next").disabled=true;
- const wrong=shuffle(unique.filter(w=>w[0]!==current[0])).slice(0,3);const opts=shuffle([current,...wrong]);$("answers").innerHTML="";
- opts.forEach(w=>{const b=document.createElement("button");b.className="answer";b.innerHTML=`<span class="cn">${w[0]}</span><span class="py">${w[1]}</span>`;b.onclick=()=>choose(b,w);$("answers").appendChild(b)});
+ $("meaning").textContent=current[2];$("hint").textContent="Chọn từ tiếng Trung có nghĩa tương ứng";$("feedback").className="feedback";$("feedback").innerHTML="";$("next").disabled=true;
+ const wrong=shuffle(unique.filter(w=>w[0]!==current[0])).slice(0,3);currentOpts=shuffle([current,...wrong]);$("answers").innerHTML="";
+ currentOpts.forEach(w=>{const b=document.createElement("button");b.className="answer";b.innerHTML=`<span class="cn">${w[0]}</span><span class="py">${w[1]}</span>`;b.onclick=()=>choose(b,w);$("answers").appendChild(b)});
 }
+
+function getOptionsSummaryHTML() {
+ const emojis = ["1️⃣", "2️⃣", "3️⃣", "4️⃣"];
+ const parts = currentOpts.map((w, idx) => {
+  return `<span class="summary-item" onclick="openStrokeModal('${w[0]}', '${w[1]}', '${w[2]}')">${emojis[idx]} <b>${w[0]}</b> (${w[1]}): ${w[2]}</span>`;
+ });
+ return `<div class="options-summary">${parts.join(" &nbsp;|&nbsp; ")}</div>`;
+}
+
 function choose(btn,w){
  if(locked)return;locked=true;answered++;const ok=w[0]===current[0];document.querySelectorAll(".answer").forEach(b=>{b.disabled=true;if(b.querySelector(".cn").textContent===current[0])b.classList.add("correct")});
- if(ok){score+=10;right++;streak++;$("feedback").className="feedback show good";$("feedback").innerHTML=`<b>✓ Chính xác! +10 điểm</b><br>${current[0]} · ${current[1]} · ${current[2]}`}
- else{streak=0;btn.classList.add("wrong");$("feedback").className="feedback show bad";$("feedback").innerHTML=`<b>✗ Chưa đúng!</b><br>Đáp án: <b>${current[0]}</b> (${current[1]}) – ${current[2]}`}
+ const summaryHtml = getOptionsSummaryHTML();
+ if(ok){score+=10;right++;streak++;$("feedback").className="feedback show good";$("feedback").innerHTML=`<b>✓ Chính xác! +10 điểm</b><br>${summaryHtml}`}
+ else{streak=0;btn.classList.add("wrong");$("feedback").className="feedback show bad";$("feedback").innerHTML=`<b>✗ Chưa đúng!</b><br>${summaryHtml}`}
  $("score").textContent=score;$("right").textContent=right;$("streak").textContent=streak;$("accuracy").textContent=`Chính xác: ${Math.round(right/answered*100)}%`;$("next").disabled=false;$("next").textContent=index===deck.length-1?"Xem kết quả":"Câu tiếp theo →";
 }
-function advance(){if(!locked){$("feedback").className="feedback show";$("feedback").textContent=`Đáp án: ${current[0]} (${current[1]}) – ${current[2]}`;answered++;streak=0;$("streak").textContent=0;document.querySelectorAll(".answer").forEach(b=>{b.disabled=true;if(b.querySelector(".cn").textContent===current[0])b.classList.add("correct")});$("next").disabled=false;locked=true;return}index++;render()}
+
+function advance(){
+ if(!locked){
+  const summaryHtml = getOptionsSummaryHTML();
+  $("feedback").className="feedback show bad";
+  $("feedback").innerHTML=`<b>⏰ Đã bỏ qua!</b><br>${summaryHtml}`;
+  answered++;streak=0;$("streak").textContent=0;
+  document.querySelectorAll(".answer").forEach(b=>{b.disabled=true;if(b.querySelector(".cn").textContent===current[0])b.classList.add("correct")});
+  $("next").disabled=false;locked=true;return;
+ }
+ index++;render();
+}
+
 function finish(){$("game").style.display="none";$("result").style.display="block";$("finalscore").textContent=score+" điểm";$("summary").textContent=`Bạn trả lời đúng ${right}/${answered} câu (${answered?Math.round(right/answered*100):0}%). Hãy chơi lại để nhớ từ lâu hơn nhé!`;$("progress").style.width="100%"}
+
+// Modal & Hanzi Writer functions
+function openStrokeModal(chineseStr, pinyin, meaning) {
+ $("modalHanziTitle").textContent = `${chineseStr} — ${meaning}`;
+ $("modalHanziPy").textContent = `Pinyin: ${pinyin}`;
+ 
+ const container = $("writerContainer");
+ container.innerHTML = "";
+ activeWriters = [];
+
+ // Tạo SVG box cho từng ký tự trong từ (hỗ trợ cả từ 1 chữ hoặc nhiều chữ như "飞机", "老师")
+ for (let char of chineseStr) {
+  const box = document.createElement("div");
+  box.className = "writer-box";
+  const targetId = "writer-" + Math.random().toString(36).substr(2, 9);
+  box.innerHTML = `<div id="${targetId}"></div>`;
+  container.appendChild(box);
+
+  const writer = HanziWriter.create(targetId, char, {
+   width: 120,
+   height: 120,
+   padding: 5,
+   showOutline: true,
+   strokeAnimationSpeed: 1,
+   delayBetweenStrokes: 300,
+   strokeColor: '#1d4ed8',
+   radicalColor: '#16a34a'
+  });
+  activeWriters.push(writer);
+  writer.animateCharacter();
+ }
+
+ $("strokeModal").classList.add("show");
+}
+
+function closeStrokeModal() {
+ $("strokeModal").classList.remove("show");
+}
+
+$("closeModal").onclick = closeStrokeModal;
+$("strokeModal").onclick = (e) => { if(e.target === $("strokeModal")) closeStrokeModal(); };
+
+$("animateBtn").onclick = () => {
+ activeWriters.forEach(writer => {
+  writer.animateCharacter();
+ });
+};
+
+$("quizBtn").onclick = () => {
+ activeWriters.forEach(writer => {
+  writer.quiz();
+ });
+};
+
 $("next").onclick=()=>{index++;render()};$("skip").onclick=advance;$("again").onclick=start;$("count").onchange=start;start();
 </script>
 </body>

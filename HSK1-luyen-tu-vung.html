@@ -38,7 +38,7 @@ main{padding:25px}
 /* Modal Popup Styles */
 .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:none;place-items:center;z-index:1000;padding:15px}
 .modal-overlay.show{display:grid}
-.modal-content{background:white;border-radius:20px;padding:25px;width:min(400px, 100%);text-align:center;box-shadow:0 20px 40px rgba(0,0,0,0.2);position:relative;animation:modalIn 0.2s ease-out}
+.modal-content{background:white;border-radius:20px;padding:25px;width:min(420px, 100%);text-align:center;box-shadow:0 20px 40px rgba(0,0,0,0.2);position:relative;animation:modalIn 0.2s ease-out}
 @keyframes modalIn{from{transform:scale(0.9);opacity:0}to{transform:scale(1);opacity:1}}
 .modal-close{position:absolute;top:12px;right:15px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted)}
 .modal-title{font-size:20px;font-weight:bold;color:var(--dark);margin-bottom:5px}
@@ -153,6 +153,16 @@ function advance(){
 
 function finish(){$("game").style.display="none";$("result").style.display="block";$("finalscore").textContent=score+" điểm";$("summary").textContent=`Bạn trả lời đúng ${right}/${answered} câu (${answered?Math.round(right/answered*100):0}%). Hãy chơi lại để nhớ từ lâu hơn nhé!`;$("progress").style.width="100%"}
 
+// Hàm chạy animation tuần tự từng chữ một
+function playSequentialAnimation(writers, index = 0) {
+ if (index >= writers.length) return;
+ writers[index].animateCharacter({
+  onComplete: () => {
+   playSequentialAnimation(writers, index + 1);
+  }
+ });
+}
+
 // Modal & Hanzi Writer functions
 function openStrokeModal(chineseStr, pinyin, meaning) {
  $("modalHanziTitle").textContent = `${chineseStr} — ${meaning}`;
@@ -162,7 +172,7 @@ function openStrokeModal(chineseStr, pinyin, meaning) {
  container.innerHTML = "";
  activeWriters = [];
 
- // Tạo SVG box cho từng ký tự trong từ (hỗ trợ cả từ 1 chữ hoặc nhiều chữ như "飞机", "老师")
+ // Tạo SVG box cho từng ký tự trong từ
  for (let char of chineseStr) {
   const box = document.createElement("div");
   box.className = "writer-box";
@@ -171,18 +181,20 @@ function openStrokeModal(chineseStr, pinyin, meaning) {
   container.appendChild(box);
 
   const writer = HanziWriter.create(targetId, char, {
-   width: 120,
-   height: 120,
+   width: 110,
+   height: 110,
    padding: 5,
    showOutline: true,
-   strokeAnimationSpeed: 1,
-   delayBetweenStrokes: 300,
+   strokeAnimationSpeed: 1.2,
+   delayBetweenStrokes: 250,
    strokeColor: '#1d4ed8',
    radicalColor: '#16a34a'
   });
   activeWriters.push(writer);
-  writer.animateCharacter();
  }
+
+ // Bắt đầu chạy tuần tự từ chữ đầu tiên
+ playSequentialAnimation(activeWriters, 0);
 
  $("strokeModal").classList.add("show");
 }
@@ -195,9 +207,7 @@ $("closeModal").onclick = closeStrokeModal;
 $("strokeModal").onclick = (e) => { if(e.target === $("strokeModal")) closeStrokeModal(); };
 
 $("animateBtn").onclick = () => {
- activeWriters.forEach(writer => {
-  writer.animateCharacter();
- });
+ playSequentialAnimation(activeWriters, 0);
 };
 
 $("quizBtn").onclick = () => {

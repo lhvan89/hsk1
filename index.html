@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HSK 1 - Học Tiếng Trung Cơ Bản</title>
+<style>
+:root{--blue:#2563eb;--dark:#172554;--muted:#64748b;--bg:#f3f6fc;--green:#16a34a;--indigo:#4f46e5}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(135deg,#eaf1ff,#f8fafc);font-family:Arial,"Noto Sans",sans-serif;color:#172033;min-height:100vh;padding:24px 18px;display:flex;flex-direction:column;align-items:center}
+.app{width:min(800px,100%);background:#fff;border-radius:24px;box-shadow:0 18px 55px #1e3a8a18;overflow:hidden;margin-bottom:20px}
+header{padding:30px 28px;background:linear-gradient(120deg,#1d4ed8,#4f46e5);color:white;text-align:center}
+h1{margin:0;font-size:28px} header p{margin:10px 0 0;color:#dbeafe;font-size:15px}
+main{padding:25px}
+.section-title{font-size:18px;font-weight:700;color:var(--dark);margin:20px 0 12px;display:flex;align-items:center;gap:8px}
+.grid-links{display:grid;grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));gap:12px;margin-bottom:25px}
+.card-link{display:flex;align-items:center;gap:12px;text-decoration:none;background:#f8fafc;border:2px solid #e3e8f2;border-radius:14px;padding:14px 16px;color:var(--dark);font-weight:bold;transition:.2s}
+.card-link:hover{border-color:var(--blue);background:#f5f8ff;transform:translateY(-2px);box-shadow:0 6px 15px rgba(37,99,235,0.08)}
+.card-icon{font-size:24px;background:#e0eaff;width:44px;height:44px;display:grid;place-items:center;border-radius:10px;flex-shrink:0}
+.card-info span{display:block;font-size:12px;color:var(--muted);font-weight:normal;margin-top:2px}
+.game-card{background:linear-gradient(135deg,#eff6ff,#eef2ff);border:2px solid #bfdbfe;border-radius:16px;padding:20px;display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:var(--dark);transition:.2s;margin-top:10px}
+.game-card:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 8px 20px rgba(37,99,235,0.12)}
+.game-content h3{margin:0 0 5px 0;font-size:20px;color:var(--blue)}
+.game-content p{margin:0;font-size:13px;color:var(--muted)}
+.game-btn{background:var(--blue);color:white;padding:10px 18px;border-radius:10px;font-weight:bold;font-size:14px}
+footer{text-align:center;color:#94a3b8;font-size:13px;padding:10px 0}
+@media(max-width:520px){.grid-links{grid-template-columns:1fr}.game-card{flex-direction:column;align-items:flex-start;gap:15px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+ <h1>🇨🇳 HSK 1 Master</h1>
+ <p>Hệ thống học tập và luyện tập tiếng Trung cơ bản</p>
+</header>
+<main>
+ <!-- Nhóm 1: Trò chơi luyện từ vựng -->
+ <div class="section-title">🎮 Trò chơi & Ôn tập</div>
+ <a href="HSK1-luyen-tu-vung.html" class="game-card">
+  <div class="game-content">
+   <h3>Luyện từ vựng HSK 1</h3>
+   <p>Trắc nghiệm nghĩa tiếng Việt, tra cứu Hán tự và tập viết từng nét trực quan.</p>
+  </div>
+  <div class="game-btn">Chơi ngay →</div>
+ </a>
+
+ <!-- Nhóm 2: Mẫu câu HSK 1 -->
+ <div class="section-title" style="margin-top:30px">📚 10 Chủ đề Mẫu câu Giao tiếp HSK 1</div>
+ <div class="grid-links">
+  <a href="HSK1-01-chao-hoi.html" class="card-link">
+   <div class="card-icon">👋</div>
+   <div class="card-info">01. Chào hỏi<span>Gặp gỡ & làm quen</span></div>
+  </a>
+  <a href="HSK1-02-gioi-thieu.html" class="card-link">
+   <div class="card-icon">👤</div>
+   <div class="card-info">02. Giới thiệu<span>Tên, tuổi, quốc tịch</span></div>
+  </a>
+  <a href="HSK1-03-gia-dinh.html" class="card-link">
+   <div class="card-icon">👨‍👩‍👧‍👦</div>
+   <div class="card-info">03. Gia đình<span>Thành viên trong nhà</span></div>
+  </a>
+  <a href="HSK1-04-thoi-gian.html" class="card-link">
+   <div class="card-icon">⏰</div>
+   <div class="card-info">04. Thời gian<span>Giờ, ngày, tháng, năm</span></div>
+  </a>
+  <a href="HSK1-05-an-uong.html" class="card-link">
+   <div class="card-icon">🍜</div>
+   <div class="card-info">05. Ăn uống<span>Món ăn, đồ uống</span></div>
+  </a>
+  <a href="HSK1-06-mua-sam.html" class="card-link">
+   <div class="card-icon">🛍️</div>
+   <div class="card-info">06. Mua sắm<span>Hỏi giá cả, số lượng</span></div>
+  </a>
+  <a href="HSK1-07-hoi-duong.html" class="card-link">
+   <div class="card-icon">🗺️</div>
+   <div class="card-info">07. Hỏi đường<span>Phương hướng, vị trí</span></div>
+  </a>
+  <a href="HSK1-08-hoc-tap.html" class="card-link">
+   <div class="card-icon">📖</div>
+   <div class="card-info">08. Học tập<span>Trường lớp, sách vở</span></div>
+  </a>
+  <a href="HSK1-09-thoi-tiet.html" class="card-link">
+   <div class="card-icon">☀️</div>
+   <div class="card-info">09. Thời tiết<span>Nóng, lạnh, mưa gió</span></div>
+  </a>
+  <a href="HSK1-10-giao-tiep.html" class="card-link">
+   <div class="card-icon">💬</div>
+   <div class="card-info">10. Giao tiếp<span>Cảm ơn, xin lỗi, tạm biệt</span></div>
+  </a>
+ </div>
+</main>
+</div>
+<footer>Ôn tập HSK 1 mỗi ngày · Chúc bạn học tốt!</footer>
+</body>
+</html>

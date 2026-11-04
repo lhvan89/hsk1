@@ -1,4 +1,4 @@
-# 🇨🇳 HSK 1 – Luyện thi tiếng Trung
+# 🇨🇳 HSK 1 – Luyện từ vựng tiếng Trung
 
 Chào mừng bạn đến với **HSK 1 – Ứng dụng luyện tập từ vựng tiếng Trung**!
 
@@ -19,6 +19,10 @@ Hoặc truy cập trực tiếp:
 ### 📚 Giới thiệu
 
 Ứng dụng hỗ trợ người học tiếng Trung luyện tập và củng cố kiến thức HSK 1 thông qua các bài tập tương tác.
+
+### 🧩 Thư viện sử dụng
+
+- [Hanzi Writer](https://hanziwriter.org) – Thư viện JavaScript hỗ trợ hiển thị và luyện viết chữ Hán theo đúng thứ tự nét (Stroke Order).
 
 ### 💻 Công nghệ
 

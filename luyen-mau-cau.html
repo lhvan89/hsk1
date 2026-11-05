@@ -6,6 +6,18 @@
 <title>Học Mẫu Câu Tiếng Trung - Kiểu Tinder</title>
 <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="js/01-mau-cau-chao-hoi.js"></script>
+<script src="js/02-mau-cau-gioi-thieu.js"></script>
+<script src="js/03-mau-cau-gia-dinh.js"></script>
+<script src="js/04-mau-cau-thoi-gian.js"></script>
+<script src="js/05-mau-cau-an-uong.js"></script>
+<script src="js/06-mau-cau-mua-sam.js"></script>
+<script src="js/07-mau-cau-dia-diem-va-hoi-duong.js"></script>
+<script src="js/08-mau-cau-hoc-tap-va-cong-viec.js"></script>
+<script src="js/09-mau-cau-thoi-tiet-va-cam-giac.js"></script>
+<script src="js/10-mau-cau-giao-tiep-hang-ngay-khac.js"></script>
+
+
 <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
 <style>
 * {
@@ -445,109 +457,8 @@ body {
 </div>
 
 <script>
-const SENTENCES = [
-    ["你好！", "Nǐ hǎo!", "Xin chào!", "你好.mp3"],
-    ["你好吗？", "Nǐ hǎo ma?", "Bạn khỏe không?", "你好吗.mp3"],
-    ["我很好。", "Wǒ hěn hǎo.", "Tôi rất khỏe.", "我很好.mp3"],
-    ["你呢？", "Nǐ ne?", "Còn bạn thì sao?", "你呢.mp3"],
-    ["我也很好。", "Wǒ yě hěn hǎo.", "Tôi cũng rất khỏe.", "我也很好.mp3"],
-    ["谢谢！", "Xièxie!", "Cảm ơn!", "谢谢.mp3"],
-    ["谢谢你。", "Xièxie nǐ.", "Cảm ơn bạn.", "谢谢你.mp3"],
-    ["不客气。", "Bú kèqi.", "Không có gì.", "不客气.mp3"],
-    ["不用谢。", "Bú yòng xiè.", "Không cần cảm ơn.", "不用谢.mp3"],
-    ["对不起。", "Duìbuqǐ.", "Xin lỗi.", "对不起.mp3"],
-    ["没关系。", "Méi guānxi.", "Không sao.", "没关系.mp3"],
-    ["再见！", "Zàijiàn!", "Tạm biệt!", "再见.mp3"],
-    ["明天见！", "Míngtiān jiàn!", "Mai gặp nhé!", "明天见.mp3"],
-    ["早上好！", "Zǎoshang hǎo!", "Chào buổi sáng!", "早上好.mp3"],
-    ["下午好！", "Xiàwǔ hǎo!", "Chào buổi chiều!", "下午好.mp3"],
-    ["晚上好！", "Wǎnshang hǎo!", "Chào buổi tối!", "晚上好.mp3"],
-    ["晚安！", "Wǎn'ān!", "Chúc ngủ ngon!", "晚安.mp3"],
-    ["大家好！", "Dàjiā hǎo!", "Chào mọi người!", "大家好.mp3"],
-    ["老师好！", "Lǎoshī hǎo!", "Chào thầy/cô!", "老师好.mp3"],
-    ["同学好！", "Tóngxué hǎo!", "Chào các bạn!", "同学好.mp3"],
-    ["您好！", "Nín hǎo!", "Xin chào (lịch sự)!", "您好.mp3"],
-    ["很高兴认识你。", "Hěn gāoxìng rènshi nǐ.", "Rất vui được làm quen với bạn.", "很高兴认识你.mp3"],
-    ["我也是。", "Wǒ yě shì.", "Tôi cũng vậy.", "我也是.mp3"],
-    ["好久不见！", "Hǎo jiǔ bú jiàn!", "Lâu rồi không gặp!", "好久不见.mp3"],
-    ["最近怎么样？", "Zuìjìn zěnmeyàng?", "Dạo này thế nào?", "最近怎么样.mp3"],
-    ["还不错。", "Hái búcuò.", "Cũng ổn.", "还不错.mp3"],
-    ["请坐。", "Qǐng zuò.", "Mời ngồi.", "请坐.mp3"],
-    ["请进。", "Qǐng jìn.", "Mời vào.", "请进.mp3"],
-    ["请等一下。", "Qǐng děng yíxià.", "Xin đợi một chút.", "请等一下.mp3"],
-    ["请慢一点。", "Qǐng màn yìdiǎn.", "Xin nói chậm một chút.", "请慢一点.mp3"],
-    ["请再说一遍。", "Qǐng zài shuō yí biàn.", "Xin nói lại một lần.", "请再说一遍.mp3"],
-    ["我不懂。", "Wǒ bù dǒng.", "Tôi không hiểu.", "我不懂.mp3"],
-    ["听不懂。", "Tīng bù dǒng.", "Nghe không hiểu.", "听不懂.mp3"],
-    ["可以说慢一点吗？", "Kěyǐ shuō màn yìdiǎn ma?", "Có thể nói chậm hơn không?", "可以说慢一点吗.mp3"],
-    ["可以。", "Kěyǐ.", "Được.", "可以.mp3"],
-    ["不可以。", "Bù kěyǐ.", "Không được.", "不可以.mp3"],
-    ["没问题。", "Méi wèntí.", "Không vấn đề gì.", "没问题.mp3"],
-    ["当然可以。", "Dāngrán kěyǐ.", "Tất nhiên được.", "当然可以.mp3"],
-    ["好的。", "Hǎo de.", "Được rồi. / Ok.", "好的.mp3"],
-    ["知道了。", "Zhīdào le.", "Biết rồi.", "知道了.mp3"],
-    ["我知道。", "Wǒ zhīdào.", "Tôi biết.", "我知道.mp3"],
-    ["我不知道。", "Wǒ bù zhīdào.", "Tôi không biết.", "我不知道.mp3"],
-    ["请问……", "Qǐngwèn…", "Xin hỏi…", "请问.mp3"],
-    ["对不起，我迟到了。", "Duìbuqǐ, wǒ chídào le.", "Xin lỗi, tôi đến muộn.", "对不起我迟到了.mp3"],
-    ["没关系，没事。", "Méi guānxi, méishì.", "Không sao, không việc gì.", "没关系没事.mp3"],
-    ["辛苦了。", "Xīnkǔ le.", "Vất vả rồi.", "辛苦了.mp3"],
-    ["加油！", "Jiāyóu!", "Cố lên!", "加油.mp3"],
-    ["祝你成功！", "Zhù nǐ chénggōng!", "Chúc bạn thành công!", "祝你成功.mp3"],
-    ["祝你幸福！", "Zhù nǐ xìngfú!", "Chúc bạn hạnh phúc!", "祝你幸福.mp3"],
-    ["祝你生日快乐！", "Zhù nǐ shēngrì kuàilè!", "Chúc bạn sinh nhật vui vẻ!", "祝你生日快乐.mp3"],
-    ["恭喜你！", "Gōngxǐ nǐ!", "Chúc mừng bạn!", "恭喜你.mp3"],
-    ["太好了！", "Tài hǎo le!", "Tuyệt quá!", "太好了.mp3"],
-    ["真棒！", "Zhēn bàng!", "Thật tuyệt!", "真棒.mp3"],
-    ["没问题，我可以帮你。", "Méi wèntí, wǒ kěyǐ bāng nǐ.", "Không vấn đề, tôi có thể giúp bạn.", "没问题我可以帮你.mp3"],
-    ["谢谢你的帮助。", "Xièxie nǐ de bāngzhù.", "Cảm ơn sự giúp đỡ của bạn.", "谢谢你的帮助.mp3"],
-    ["不客气，应该的。", "Bú kèqi, yīnggāi de.", "Không có gì, đó là việc nên làm.", "不客气应该的.mp3"],
-    ["你先请。", "Nǐ xiān qǐng.", "Mời bạn trước.", "你先请.mp3"],
-    ["请这边走。", "Qǐng zhè biān zǒu.", "Mời đi phía này.", "请这边走.mp3"],
-    ["小心一点。", "Xiǎoxīn yìdiǎn.", "Cẩn thận một chút.", "小心一点.mp3"],
-    ["注意安全。", "Zhùyì ānquán.", "Chú ý an toàn.", "注意安全.mp3"],
-    ["路上小心。", "Lùshang xiǎoxīn.", "Đi đường cẩn thận.", "路上小心.mp3"],
-    ["保重身体。", "Bǎozhòng shēntǐ.", "Giữ gìn sức khỏe.", "保重身体.mp3"],
-    ["多保重。", "Duō bǎozhòng.", "Bảo trọng nhiều nhé.", "多保重.mp3"],
-    ["下次见！", "Xià cì jiàn!", "Lần sau gặp lại!", "下次见.mp3"],
-    ["有空再聊。", "Yǒu kòng zài liáo.", "Có rảnh nói chuyện tiếp nhé.", "有空再聊.mp3"],
-    ["保持联系。", "Bǎochí liánxì.", "Giữ liên lạc nhé.", "保持联系.mp3"],
-    ["欢迎你！", "Huānyíng nǐ!", "Hoan nghênh bạn!", "欢迎你.mp3"],
-    ["欢迎来到中国。", "Huānyíng lái dào Zhōngguó.", "Chào mừng đến Trung Quốc.", "欢迎来到中国.mp3"],
-    ["欢迎来到越南。", "Huānyíng lái dào Yuènán.", "Chào mừng đến Việt Nam.", "欢迎来到越南.mp3"],
-    ["这是我的名片。", "Zhè shì wǒ de míngpiàn.", "Đây là danh thiếp của tôi.", "这是我的名片.mp3"],
-    ["请多关照。", "Qǐng duō guānzhào.", "Xin hãy chiếu cố nhiều.", "请多关照.mp3"],
-    ["请多指教。", "Qǐng duō zhǐjiào.", "Xin hãy chỉ giáo nhiều.", "请多指教.mp3"],
-    ["不好意思。", "Bù hǎoyìsi.", "Xin lỗi / Ngại quá.", "不好意思.mp3"],
-    ["真对不起。", "Zhēn duìbuqǐ.", "Thật xin lỗi.", "真对不起.mp3"],
-    ["没事没事。", "Méishì méishì.", "Không sao không sao.", "没事没事.mp3"],
-    ["太感谢了！", "Tài gǎnxiè le!", "Cảm ơn quá!", "太感谢了.mp3"],
-    ["非常感谢！", "Fēicháng gǎnxiè!", "Cảm ơn rất nhiều!", "非常感谢.mp3"],
-    ["我帮你。", "Wǒ bāng nǐ.", "Tôi giúp bạn.", "我帮你.mp3"],
-    ["需要帮助吗？", "Xūyào bāngzhù ma?", "Cần giúp đỡ không?", "需要帮助吗.mp3"],
-    ["需要帮忙吗？", "Xūyào bāngmáng ma?", "Cần giúp không?", "需要帮忙吗.mp3"],
-    ["不用了，谢谢。", "Bú yòng le, xièxie.", "Không cần đâu, cảm ơn.", "不用了谢谢.mp3"],
-    ["好的，谢谢。", "Hǎo de, xièxie.", "Được rồi, cảm ơn.", "好的谢谢.mp3"],
-    ["再见，路上小心。", "Zàijiàn, lùshang xiǎoxīn.", "Tạm biệt, đi đường cẩn thận.", "再见路上小心.mp3"],
-    ["拜拜！", "Bàibài!", "Bye bye!", "拜拜.mp3"],
-    ["回头见！", "Huítóu jiàn!", "Gặp lại sau!", "回头见.mp3"],
-    ["一会儿见。", "Yíhuìr jiàn.", "Lát nữa gặp.", "一会儿见.mp3"],
-    ["周末见！", "Zhōumò jiàn!", "Cuối tuần gặp nhé!", "周末见.mp3"],
-    ["你先走吧。", "Nǐ xiān zǒu ba.", "Bạn đi trước đi.", "你先走吧.mp3"],
-    ["我先走了。", "Wǒ xiān zǒu le.", "Tôi đi trước đây.", "我先走了.mp3"],
-    ["慢走！", "Màn zǒu!", "Đi chậm nhé!", "慢走.mp3"],
-    ["请多保重。", "Qǐng duō bǎozhòng.", "Xin hãy bảo trọng.", "请多保重.mp3"],
-    ["有空来玩。", "Yǒu kòng lái wán.", "Có rảnh đến chơi nhé.", "有空来玩.mp3"],
-    ["一定来！", "Yídìng lái!", "Nhất định đến!", "一定来.mp3"],
-    ["欢迎再来。", "Huānyíng zài lái.", "Hoan nghênh đến lại.", "欢迎再来.mp3"],
-    ["下次再聊。", "Xià cì zài liáo.", "Lần sau nói chuyện tiếp.", "下次再聊.mp3"],
-    ["今天很高兴认识你。", "Jīntiān hěn gāoxìng rènshi nǐ.", "Hôm nay rất vui được biết bạn.", "今天很高兴认识你.mp3"],
-    ["希望下次再见面。", "Xīwàng xià cì zài jiànmiàn.", "Hy vọng lần sau gặp lại.", "希望下次再见面.mp3"],
-    ["请多关照我。", "Qǐng duō guānzhào wǒ.", "Xin hãy chiếu cố tôi nhiều.", "请多关照我.mp3"],
-    ["大家辛苦了！", "Dàjiā xīnkǔ le!", "Mọi người vất vả rồi!", "大家辛苦了.mp3"],
-    ["谢谢大家！", "Xièxie dàjiā!", "Cảm ơn mọi người!", "谢谢大家.mp3"]
-];
-const ALL_SENTENCES = SENTENCES.map(([zh, pinyin, vi, audioUrl]) => ({
+const TAT_CA_MAU_CAU = [MAU_CAU_CHAO_HOI, MAU_CAU_GIOI_THIEU, MAU_CAU_GIA_DINH, MAU_CAU_THOI_GIAN, MAU_CAU_AN_UONG, MAU_CAU_MUA_SAM, MAU_CAU_DIA_DIEM_VA_HOI_DUONG, MAU_CAU_HOC_TAP_VA_CONG_VIEC, MAU_CAU_THOI_TIET_VA_CAM_GIAC, MAU_CAU_GIAO_TIEP_HANG_NGAY_KHAC].flat();
+const ALL_SENTENCES = TAT_CA_MAU_CAU.map(([zh, pinyin, vi, audioUrl]) => ({
     zh,
     pinyin,
     vi,

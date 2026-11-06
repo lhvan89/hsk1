@@ -1,0 +1,778 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HSK 1 - Chọn cặp từ</title>
+<script src="js/300-words-hsk1.js"></script>
+
+<style>
+:root {
+  --blue: #2563eb;
+  --dark: #172554;
+  --muted: #64748b;
+  --bg: #f3f6fc;
+  --green: #16a34a;
+  --red: #dc2626;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 18px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg,#eaf1ff,#f8fafc);
+  font-family: Arial,"Noto Sans",sans-serif;
+  color: #172033;
+}
+
+.app {
+  width: min(650px,100%);
+  background: white;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 18px 55px #1e3a8a18;
+}
+
+header {
+  padding: 24px;
+  color: white;
+  background: linear-gradient(120deg,#1d4ed8,#4f46e5);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+header p {
+  margin: 8px 0 0;
+  color: #dbeafe;
+  font-size: 14px;
+}
+
+main {
+  padding: 24px;
+}
+
+.stats {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.stat {
+  flex: 1;
+  padding: 12px 5px;
+  text-align: center;
+  border: 1px solid #e5eaf3;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+.stat small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.stat b {
+  display: block;
+  font-size: 20px;
+  margin-top: 5px;
+}
+
+.topline {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.track {
+  height: 9px;
+  background: #e8edf6;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg,#3b82f6,#6366f1);
+  transition: width .3s;
+}
+
+.instruction {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.instruction b {
+  display: block;
+  color: var(--dark);
+  font-size: 17px;
+}
+
+.instruction small {
+  display: block;
+  color: var(--muted);
+  margin-top: 7px;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.card {
+  min-height: 85px;
+  width: 100%;
+  padding: 12px 8px;
+  border: 2px solid #e3e8f2;
+  background: white;
+  border-radius: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  transition: .18s;
+  user-select: none;
+}
+
+.card:hover:not(.matched):not(.disabled) {
+  border-color: #93b4ff;
+  background: #f5f8ff;
+}
+
+.card .cn {
+  font-size: 25px;
+  font-weight: bold;
+  color: var(--dark);
+}
+
+.card .meaning {
+  font-size: 15px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.card .py {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 5px;
+}
+
+.card.selected {
+  border-color: var(--blue);
+  background: #eff6ff;
+}
+
+.card.matched {
+  border-color: #22c55e;
+  background: #f0fdf4;
+  cursor: default;
+  opacity: .75;
+}
+
+.card.wrong {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.card.disabled {
+  pointer-events: none;
+}
+
+.feedback {
+  min-height: 45px;
+  margin-top: 18px;
+  padding: 12px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  display: none;
+}
+
+.feedback.show {
+  display: block;
+}
+
+.feedback.good {
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.feedback.bad {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+button {
+  border: 0;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.primary {
+  background: var(--blue);
+  color: white;
+  flex: 1;
+}
+
+.primary:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+.secondary {
+  background: #eef2ff;
+  color: #3730a3;
+}
+
+.result {
+  display: none;
+  text-align: center;
+  padding: 35px 10px;
+}
+
+.result h2 {
+  color: var(--dark);
+}
+
+.bigscore {
+  font-size: 55px;
+  font-weight: 800;
+  color: var(--blue);
+}
+
+.result p {
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+footer {
+  text-align: center;
+  padding: 0 15px 20px;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+@media(max-width:400px) {
+  body { padding: 8px; }
+  main { padding: 16px; }
+  header { padding: 20px; }
+  .card { min-height: 76px; }
+  .card .cn { font-size: 22px; }
+  .card .meaning { font-size: 13px; }
+  .stats { gap: 6px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+  <h1>🇨🇳 HSK 1 · Chọn cặp từ</h1>
+  <p>Ghép chữ Hán với nghĩa tiếng Việt tương ứng</p>
+</header>
+
+<main>
+
+<div id="game">
+
+  <div class="stats">
+    <div class="stat">
+      <small>Đã ghép</small>
+      <b id="score">0</b>
+    </div>
+    <div class="stat">
+      <small>Số lần sai</small>
+      <b id="mistakes">0</b>
+    </div>
+    <div class="stat">
+      <small>Độ chính xác</small>
+      <b id="accuracy">100%</b>
+    </div>
+  </div>
+
+  <div class="topline">
+    <span id="stageLabel">Màn 1 / 10</span>
+    <span id="pairLabel">0 / 5 cặp</span>
+  </div>
+
+  <div class="track">
+    <div class="fill" id="progress"></div>
+  </div>
+
+  <div class="instruction">
+    <b>🔗 Tìm 5 cặp từ tương ứng</b>
+    <small>Chọn một từ tiếng Trung và một nghĩa tiếng Việt</small>
+  </div>
+
+  <div class="board" id="board"></div>
+
+  <div class="feedback" id="feedback"></div>
+
+  <div class="actions">
+    <button class="secondary" id="restart">↻ Chơi lại</button>
+    <button class="primary" id="next" disabled>
+      Màn tiếp theo →
+    </button>
+  </div>
+
+</div>
+
+<div class="result" id="result">
+  <div style="font-size:55px">🏆</div>
+  <h2>Hoàn thành 10 màn!</h2>
+  <div class="bigscore" id="finalScore">50/50</div>
+  <p id="summary"></p>
+  <button class="primary" onclick="startGame()">
+    Chơi lượt mới ↻
+  </button>
+</div>
+
+</main>
+
+<footer>
+  HSK 1 · Luyện từ vựng mỗi ngày
+</footer>
+
+</div>
+
+<script>
+
+// ========================================
+// CẤU HÌNH GAME
+// ========================================
+
+const TOTAL_STAGES = 10;
+const PAIRS_PER_STAGE = 5;
+const TOTAL_PAIRS = TOTAL_STAGES * PAIRS_PER_STAGE;
+
+
+// ========================================
+// TRẠNG THÁI
+// ========================================
+
+let gameWords = [];
+let stage = 0;
+let matched = 0;
+let mistakes = 0;
+let selected = [];
+let locked = false;
+let totalAttempts = 0;
+
+
+// ========================================
+// DOM
+// ========================================
+
+const $ = id => document.getElementById(id);
+
+const board = $("board");
+const feedback = $("feedback");
+
+
+// ========================================
+// HÀM TIỆN ÍCH
+// ========================================
+
+function shuffle(array) {
+  const arr = [...array];
+
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+
+  return arr;
+}
+
+
+// ========================================
+// BẮT ĐẦU GAME
+// ========================================
+
+function startGame() {
+
+  if (typeof words === "undefined" || words.length < TOTAL_PAIRS) {
+    alert("Không tìm thấy dữ liệu từ vựng 300 từ HSK 1!");
+    return;
+  }
+
+  gameWords = shuffle(
+    words.filter(w => w && w.length >= 3)
+  ).slice(0, TOTAL_PAIRS);
+
+  stage = 0;
+  mistakes = 0;
+  totalAttempts = 0;
+
+  $("game").style.display = "block";
+  $("result").style.display = "none";
+
+  loadStage();
+}
+
+
+// ========================================
+// TẠO MỘT MÀN CHƠI
+// ========================================
+
+function loadStage() {
+
+  matched = 0;
+  selected = [];
+  locked = false;
+
+  $("stageLabel").textContent =
+    `Màn ${stage + 1} / ${TOTAL_STAGES}`;
+
+  $("pairLabel").textContent = "0 / 5 cặp";
+
+  $("score").textContent = stage * PAIRS_PER_STAGE;
+  $("mistakes").textContent = mistakes;
+
+  updateAccuracy();
+  updateProgress();
+
+  $("next").disabled = true;
+
+  feedback.className = "feedback";
+  feedback.textContent = "";
+
+  // Lấy 5 từ của màn hiện tại
+  const currentWords = gameWords.slice(
+    stage * PAIRS_PER_STAGE,
+    (stage + 1) * PAIRS_PER_STAGE
+  );
+
+  // Cột trái: tiếng Việt
+  const vietnamese = shuffle(
+    currentWords.map((word, index) => ({
+      id: index,
+      type: "meaning",
+      value: word[2]
+    }))
+  );
+
+  // Cột phải: tiếng Trung
+  const chinese = shuffle(
+    currentWords.map((word, index) => ({
+      id: index,
+      type: "chinese",
+      value: word[0],
+      pinyin: word[1]
+    }))
+  );
+
+  board.innerHTML = "";
+
+  // Hiển thị tiêu đề hai cột
+  const leftTitle = document.createElement("div");
+  leftTitle.textContent = "🇻🇳 TIẾNG VIỆT";
+  leftTitle.className = "column-title";
+
+  const rightTitle = document.createElement("div");
+  rightTitle.textContent = "🇨🇳 TIẾNG TRUNG";
+  rightTitle.className = "column-title";
+
+  board.append(leftTitle, rightTitle);
+
+  // Mỗi hàng gồm một thẻ trái và một thẻ phải
+  for (let i = 0; i < PAIRS_PER_STAGE; i++) {
+
+    const left = createCard(vietnamese[i]);
+    const right = createCard(chinese[i]);
+
+    board.append(left, right);
+
+  }
+
+}
+
+
+// Tạo thẻ từ vựng
+function createCard(card) {
+
+  const el = document.createElement("button");
+
+  el.type = "button";
+  el.className = "card";
+
+  if (card.type === "chinese") {
+
+    el.innerHTML = `
+      <span class="cn">${card.value}</span>
+      <span class="py">${card.pinyin}</span>
+    `;
+
+  } else {
+
+    el.innerHTML = `
+      <span class="meaning">${card.value}</span>
+    `;
+
+  }
+
+  el.dataset.id = card.id;
+  el.dataset.type = card.type;
+
+  el.addEventListener("click", () => selectCard(el));
+
+  return el;
+
+}
+
+
+// ========================================
+// CHỌN THẺ
+// ========================================
+
+function selectCard(card) {
+
+  if (
+    locked ||
+    card.classList.contains("matched") ||
+    card.classList.contains("selected")
+  ) return;
+
+  // Tìm thẻ đang được chọn cùng loại
+  const sameTypeIndex = selected.findIndex(
+    item => item.dataset.type === card.dataset.type
+  );
+
+  // Nếu đã chọn một thẻ cùng loại thì hủy thẻ cũ
+  if (sameTypeIndex !== -1) {
+
+    const oldCard = selected[sameTypeIndex];
+
+    oldCard.classList.remove("selected");
+
+    selected.splice(sameTypeIndex, 1);
+
+  }
+
+  // Chọn thẻ mới
+  card.classList.add("selected");
+  selected.push(card);
+
+  // Chỉ kiểm tra khi đã chọn đủ 2 loại thẻ khác nhau
+  if (selected.length === 2) {
+    checkMatch();
+  }
+
+}
+
+
+// ========================================
+// KIỂM TRA GHÉP CẶP
+// ========================================
+
+function checkMatch() {
+
+  locked = true;
+  totalAttempts++;
+
+  const [first, second] = selected;
+
+  const isMatch =
+    first.dataset.id === second.dataset.id &&
+    first.dataset.type !== second.dataset.type;
+
+  if (isMatch) {
+
+    first.classList.remove("selected");
+    second.classList.remove("selected");
+
+    first.classList.add("matched");
+    second.classList.add("matched");
+
+    matched++;
+
+    $("pairLabel").textContent =
+      `${matched} / ${PAIRS_PER_STAGE} cặp`;
+
+    $("score").textContent =
+      stage * PAIRS_PER_STAGE + matched;
+
+    updateAccuracy();
+
+    feedback.textContent = "✓ Chính xác! Bạn đã ghép đúng một cặp.";
+    feedback.className = "feedback show good";
+
+    selected = [];
+    locked = false;
+
+    if (matched === PAIRS_PER_STAGE) {
+      completeStage();
+    }
+
+  } else {
+
+    mistakes++;
+
+    $("mistakes").textContent = mistakes;
+
+    first.classList.add("wrong");
+    second.classList.add("wrong");
+
+    feedback.textContent = "✕ Chưa chính xác! Hãy thử lại nhé.";
+    feedback.className = "feedback show bad";
+
+    setTimeout(() => {
+
+      first.classList.remove("selected", "wrong");
+      second.classList.remove("selected", "wrong");
+
+      selected = [];
+      locked = false;
+
+    }, 700);
+
+    updateAccuracy();
+
+  }
+
+}
+
+
+// ========================================
+// HOÀN THÀNH MÀN
+// ========================================
+
+function completeStage() {
+
+  updateProgress();
+
+  feedback.textContent =
+    "🎉 Tuyệt vời! Bạn đã hoàn thành cả 5 cặp từ.";
+
+  feedback.className = "feedback show good";
+
+  $("next").disabled = false;
+
+  $("next").textContent =
+    stage === TOTAL_STAGES - 1
+      ? "Xem kết quả 🏆"
+      : "Màn tiếp theo →";
+
+}
+
+
+// ========================================
+// TIẾN TRÌNH TOÀN LƯỢT CHƠI
+// ========================================
+
+function updateProgress() {
+
+  const completed = stage * PAIRS_PER_STAGE + matched;
+
+  const percent = completed / TOTAL_PAIRS * 100;
+
+  $("progress").style.width = percent + "%";
+
+}
+
+
+// ========================================
+// ĐỘ CHÍNH XÁC
+// ========================================
+
+function updateAccuracy() {
+
+  const accuracy = totalAttempts === 0
+    ? 100
+    : Math.round(
+        (totalAttempts - mistakes) / totalAttempts * 100
+      );
+
+  $("accuracy").textContent = accuracy + "%";
+
+}
+
+
+// ========================================
+// MÀN TIẾP THEO
+// ========================================
+
+$("next").addEventListener("click", () => {
+
+  if (matched !== PAIRS_PER_STAGE) return;
+
+  if (stage === TOTAL_STAGES - 1) {
+    finishGame();
+    return;
+  }
+
+  stage++;
+  loadStage();
+
+});
+
+
+// ========================================
+// KẾT THÚC GAME
+// ========================================
+
+function finishGame() {
+
+  $("game").style.display = "none";
+  $("result").style.display = "block";
+
+  $("finalScore").textContent = "50 / 50";
+
+  $("summary").textContent =
+    `Bạn đã hoàn thành 10 màn chơi với ${mistakes} lần ghép sai. ` +
+    `Độ chính xác: ${$("accuracy").textContent}. ` +
+    `Chúc mừng bạn!`;
+
+}
+
+
+// ========================================
+// CHƠI LẠI
+// ========================================
+
+$("restart").addEventListener("click", () => {
+
+  if (confirm("Bạn có muốn bắt đầu một lượt chơi mới?")) {
+    startGame();
+  }
+
+});
+
+
+// Khởi động
+startGame();
+
+</script>
+
+</body>
+</html>

@@ -494,17 +494,6 @@ function loadStage() {
 
   board.innerHTML = "";
 
-  // Hiển thị tiêu đề hai cột
-  const leftTitle = document.createElement("div");
-  leftTitle.textContent = "🇻🇳 TIẾNG VIỆT";
-  leftTitle.className = "column-title";
-
-  const rightTitle = document.createElement("div");
-  rightTitle.textContent = "🇨🇳 TIẾNG TRUNG";
-  rightTitle.className = "column-title";
-
-  board.append(leftTitle, rightTitle);
-
   // Mỗi hàng gồm một thẻ trái và một thẻ phải
   for (let i = 0; i < PAIRS_PER_STAGE; i++) {
 

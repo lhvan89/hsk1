@@ -70,7 +70,7 @@
 
             <!-- Progress Bar Info -->
             <div class="flex justify-between items-center text-sm font-bold text-gray-600 px-1">
-                <span id="question-index">Câu 1 / 100</span>
+                <span id="question-index">Câu 1 / 20</span>
                 <span id="accuracy">Chính xác: 0%</span>
             </div>
             <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden -mt-3">
@@ -97,7 +97,7 @@
 
             <!-- Word Options Zone -->
             <div class="flex-1">
-                <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-1">CHỌN CÁC TỪ BÊN DƯỚI</div>
+                <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-1">CHỌN CÁC TỪ BÊN DƯỚI (CÓ TỪ NHIỄU)</div>
                 <div id="options-zone" class="flex flex-wrap gap-2 min-h-[70px]"></div>
             </div>
 
@@ -123,21 +123,41 @@
 
     <script>
         const TAT_CA_MAU_CAU = [MAU_CAU_CHAO_HOI, MAU_CAU_GIOI_THIEU, MAU_CAU_GIA_DINH, MAU_CAU_THOI_GIAN, MAU_CAU_AN_UONG, MAU_CAU_MUA_SAM, MAU_CAU_DIA_DIEM_VA_HOI_DUONG, MAU_CAU_HOC_TAP_VA_CONG_VIEC, MAU_CAU_THOI_TIET_VA_CAM_GIAC, MAU_CAU_GIAO_TIEP_HANG_NGAY_KHAC].flat();
+
+        const ALL_SENTENCES = TAT_CA_MAU_CAU.map(([zh, pinyin, vi, audioUrl]) => ({
+            zh,
+            pinyin,
+            vi,
+            audioUrl: `audio/${audioUrl}`
+        }));
+
+        let gameQuestions = []; 
         let currentIndex = 0;
         let score = 0;
         let correctCount = 0;
         let streak = 0;
         let totalAnswered = 0;
 
-        let selectedWords = [];
-        let availableWords = [];
+        let allTokensForQuestion = []; 
+        let selectedWords = [];        
 
         function initGame() {
+            startNewGameSession();
+        }
+
+        function startNewGameSession() {
+            const shuffledAll = shuffle(ALL_SENTENCES);
+            const count = Math.min(20, shuffledAll.length);
+            gameQuestions = shuffledAll.slice(0, count);
+            currentIndex = 0;
+            score = 0;
+            correctCount = 0;
+            streak = 0;
+            totalAnswered = 0;
             loadQuestion(currentIndex);
         }
 
         function tokenize(text) {
-            // Tách các ký tự Hán ngữ và giữ dấu câu đi kèm chữ liền kề
             const tokens = [];
             let currentToken = "";
             for (let i = 0; i < text.length; i++) {
@@ -167,23 +187,61 @@
             return arr;
         }
 
+        // Hàm phát âm một từ đơn lẻ bằng giọng máy hệ thống
+        function speakWord(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'zh-CN';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
         function loadQuestion(index) {
-            const item = TAT_CA_MAU_CAU[index];
-            document.getElementById('meaning-vn').textContent = item[2];
-            document.getElementById('pinyin-text').textContent = item[1];
-            document.getElementById('question-index').textContent = `Câu ${index + 1} / ${TAT_CA_MAU_CAU.length}`;
+            const item = gameQuestions[index];
+            document.getElementById('meaning-vn').textContent = item.vi;
+            document.getElementById('pinyin-text').textContent = item.pinyin;
+            document.getElementById('question-index').textContent = `Câu ${index + 1} / ${gameQuestions.length}`;
             
-            const progressPct = ((index) / TAT_CA_MAU_CAU.length) * 100;
+            const progressPct = (index / gameQuestions.length) * 100;
             document.getElementById('progress-bar').style.width = `${progressPct}%`;
 
-            const tokens = tokenize(item[0]);
-            availableWords = shuffle(tokens.map((text, id) => ({ id: `${index}-${id}-${text}`, text })));
+            // 1. Tách từ chuẩn của câu
+            const correctTokens = tokenize(item.zh);
+            let tokenObjects = correctTokens.map((text, id) => ({ 
+                id: `c-${index}-${id}-${text}`, 
+                text, 
+                isDistractor: false 
+            }));
+
+            // 2. Thêm 5 từ nhiễu ngẫu nhiên từ các câu khác trong ALL_SENTENCES để tăng độ khó
+            let candidateDistractors = [];
+            ALL_SENTENCES.forEach((s, sIdx) => {
+                if (s.zh !== item.zh) {
+                    const tokens = tokenize(s.zh);
+                    tokens.forEach(t => candidateDistractors.push(t));
+                }
+            });
+
+            candidateDistractors = shuffle(candidateDistractors);
+            const numDistractors = Math.min(5, candidateDistractors.length);
+            for (let i = 0; i < numDistractors; i++) {
+                tokenObjects.push({
+                    id: `d-${index}-dis-${i}-${candidateDistractors[i]}`,
+                    text: candidateDistractors[i],
+                    isDistractor: true
+                });
+            }
+
+            allTokensForQuestion = shuffle(tokenObjects);
             selectedWords = [];
 
             document.getElementById('status-message').className = "hidden";
-            document.getElementById('check-btn').disabled = false;
-            document.getElementById('check-btn').innerText = "Kiểm tra đáp án";
-            document.getElementById('check-btn').onclick = checkAnswer;
+            const checkBtn = document.getElementById('check-btn');
+            checkBtn.disabled = false;
+            checkBtn.innerText = "Kiểm tra đáp án";
+            checkBtn.onclick = checkAnswer;
 
             renderWords();
         }
@@ -202,52 +260,64 @@
                 placeholder.classList.add('hidden');
             }
 
+            // Hiển thị từ ở vùng đáp án (khi bấm sẽ gỡ ra và phát âm từ đó)
             selectedWords.forEach((word) => {
                 const btn = document.createElement('button');
-                btn.className = "word-btn pop-in bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded-2xl shadow transition text-lg border-b-2 border-blue-700";
+                btn.className = "word-btn pop-in bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded-2xl shadow transition text-lg border-b-2 border-blue-700 cursor-pointer";
                 btn.textContent = word.text;
-                btn.onclick = () => deselectWord(word);
+                btn.onclick = () => {
+                    speakWord(word.text);
+                    deselectWord(word.id);
+                };
                 answerZone.appendChild(btn);
             });
 
-            availableWords.forEach((word) => {
+            // Hiển thị từ ở vùng kho (khi bấm sẽ chọn lên trên và phát âm từ đó)
+            const selectedIds = new Set(selectedWords.map(w => w.id));
+            allTokensForQuestion.forEach((word) => {
+                const isSelected = selectedIds.has(word.id);
                 const btn = document.createElement('button');
-                btn.className = "word-btn pop-in bg-white hover:bg-gray-50 text-gray-800 font-bold px-4 py-2 rounded-2xl shadow border-2 border-gray-200 transition text-lg border-b-4 active:border-b-2";
+                
+                if (isSelected) {
+                    btn.className = "word-btn bg-gray-100 text-gray-300 font-bold px-4 py-2 rounded-2xl border-2 border-gray-200 text-lg opacity-40 cursor-not-allowed";
+                    btn.disabled = true;
+                } else {
+                    btn.className = "word-btn pop-in bg-white hover:bg-gray-50 text-gray-800 font-bold px-4 py-2 rounded-2xl shadow border-2 border-gray-200 transition text-lg border-b-4 active:border-b-2 cursor-pointer";
+                    btn.onclick = () => {
+                        speakWord(word.text);
+                        selectWord(word);
+                    };
+                }
                 btn.textContent = word.text;
-                btn.onclick = () => selectWord(word);
                 optionsZone.appendChild(btn);
             });
         }
 
         function selectWord(word) {
-            availableWords = availableWords.filter(w => w.id !== word.id);
             selectedWords.push(word);
             renderWords();
         }
 
-        function deselectWord(word) {
-            selectedWords = selectedWords.filter(w => w.id !== word.id);
-            availableWords.push(word);
+        function deselectWord(wordId) {
+            selectedWords = selectedWords.filter(w => w.id !== wordId);
             renderWords();
         }
 
         function resetAnswer() {
-            if (selectedWords.length === 0) return;
-            availableWords = availableWords.concat(selectedWords);
             selectedWords = [];
             renderWords();
+            document.getElementById('status-message').className = "hidden";
         }
 
+        // Phát âm thanh câu mẫu ưu tiên file MP3, nếu lỗi/không có thì đọc bằng giọng máy
         function playAudio() {
-            const text = TAT_CA_MAU_CAU[currentIndex][0];
-            const fileName = TAT_CA_MAU_CAU[currentIndex][3];
+            const currentItem = gameQuestions[currentIndex];
+            const audio = new Audio(currentItem.audioUrl);
             
-            const audio = new Audio(fileName);
             audio.play().catch(() => {
-                // Fallback bằng Web Speech API nếu không tìm thấy file audio mp3
                 if ('speechSynthesis' in window) {
                     window.speechSynthesis.cancel();
-                    const utterance = new SpeechSynthesisUtterance(text);
+                    const utterance = new SpeechSynthesisUtterance(currentItem.zh);
                     utterance.lang = 'zh-CN';
                     utterance.rate = 0.85;
                     window.speechSynthesis.speak(utterance);
@@ -256,9 +326,8 @@
         }
 
         function checkAnswer() {
-            const userStr = selectedWords.map(w => w.text).join('');
-            const targetStr = TAT_CA_MAU_CAU[currentIndex][0];
-
+            let userStr = selectedWords.map(w => w.text).join('');
+            const targetStr = gameQuestions[currentIndex].zh;
             const statusEl = document.getElementById('status-message');
             totalAnswered++;
 
@@ -270,33 +339,34 @@
                 statusEl.className = "p-3 rounded-2xl text-center text-sm font-bold pop-in bg-emerald-100 text-emerald-800 border border-emerald-200";
                 statusEl.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Chính xác! Tuyệt vời!`;
                 playAudio();
+
+                document.getElementById('score').textContent = score;
+                document.getElementById('correct-count').textContent = correctCount;
+                document.getElementById('streak').textContent = streak;
+                
+                const acc = Math.round((correctCount / totalAnswered) * 100);
+                document.getElementById('accuracy').textContent = `Chính xác: ${acc}%`;
+
+                const checkBtn = document.getElementById('check-btn');
+                checkBtn.innerText = "Câu tiếp theo";
+                checkBtn.onclick = nextQuestion;
             } else {
                 streak = 0;
                 statusEl.className = "p-3 rounded-2xl text-center text-sm font-bold pop-in bg-rose-100 text-rose-800 border border-rose-200";
-                statusEl.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> Chưa chính xác. Đáp án đúng: <span class="font-black">${targetStr}</span>`;
+                statusEl.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> Chưa chính xác. Hãy sắp xếp lại hoặc bấm "Làm lại" nhé!`;
+
+                document.getElementById('streak').textContent = streak;
+                const acc = Math.round((correctCount / totalAnswered) * 100);
+                document.getElementById('accuracy').textContent = `Chính xác: ${acc}%`;
             }
-
-            document.getElementById('score').textContent = score;
-            document.getElementById('correct-count').textContent = correctCount;
-            document.getElementById('streak').textContent = streak;
-            
-            const acc = Math.round((correctCount / totalAnswered) * 100);
-            document.getElementById('accuracy').textContent = `Chính xác: ${acc}%`;
-
-            const checkBtn = document.getElementById('check-btn');
-            checkBtn.innerText = "Câu tiếp theo";
-            checkBtn.onclick = nextQuestion;
         }
 
         function nextQuestion() {
             currentIndex++;
-            if (currentIndex >= TAT_CA_MAU_CAU.length) {
-                alert(`Bạn đã hoàn thành tất cả ${TAT_CA_MAU_CAU.length} câu! Tổng điểm: ${score}`);
-                currentIndex = 0;
-                score = 0;
-                correctCount = 0;
-                streak = 0;
-                totalAnswered = 0;
+            if (currentIndex >= gameQuestions.length) {
+                alert(`Bạn đã hoàn thành tất cả ${gameQuestions.length} câu trong màn này! Tổng điểm: ${score}`);
+                startNewGameSession(); 
+                return;
             }
             loadQuestion(currentIndex);
         }

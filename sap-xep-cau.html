@@ -106,7 +106,7 @@
 
             <!-- Action Buttons -->
             <div class="grid grid-cols-3 gap-3">
-                <button onclick="resetAnswer()" class="col-span-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3.5 px-4 rounded-2xl transition btn-shadow">
+                <button id="reset-btn" onclick="resetAnswer()" class="col-span-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3.5 px-4 rounded-2xl transition btn-shadow">
                     Làm lại
                 </button>
                 <button id="check-btn" onclick="checkAnswer()" class="col-span-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-2xl transition btn-shadow">
@@ -139,7 +139,8 @@
         let totalAnswered = 0;
 
         let allTokensForQuestion = []; 
-        let selectedWords = [];        
+        let selectedWords = [];
+        let isAnswerCorrect = false;
 
         function initGame() {
             startNewGameSession();
@@ -200,6 +201,12 @@
 
         function loadQuestion(index) {
             const item = gameQuestions[index];
+            isAnswerCorrect = false;
+
+            const resetBtn = document.getElementById('reset-btn');
+            resetBtn.disabled = false;
+            resetBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+
             document.getElementById('meaning-vn').textContent = item.vi;
             document.getElementById('pinyin-text').textContent = item.pinyin;
             document.getElementById('question-index').textContent = `Câu ${index + 1} / ${gameQuestions.length}`;
@@ -260,34 +267,51 @@
                 placeholder.classList.add('hidden');
             }
 
-            // Hiển thị từ ở vùng đáp án (khi bấm sẽ gỡ ra và phát âm từ đó)
+            // Hiển thị từ đã chọn
             selectedWords.forEach((word) => {
                 const btn = document.createElement('button');
-                btn.className = "word-btn pop-in bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded-2xl shadow transition text-lg border-b-2 border-blue-700 cursor-pointer";
+
+                btn.className = `word-btn ${
+                    isAnswerCorrect
+                        ? "bg-emerald-500 text-white opacity-70 cursor-not-allowed"
+                        : "pop-in bg-blue-500 hover:bg-blue-600 text-white cursor-pointer"
+                } font-bold px-4 py-2 rounded-2xl shadow transition text-lg border-b-2 border-blue-700`;
+
                 btn.textContent = word.text;
-                btn.onclick = () => {
-                    speakWord(word.text);
-                    deselectWord(word.id);
-                };
+                btn.disabled = isAnswerCorrect;
+
+                if (!isAnswerCorrect) {
+                    btn.onclick = () => {
+                        speakWord(word.text);
+                        deselectWord(word.id);
+                    };
+                }
+
                 answerZone.appendChild(btn);
             });
 
-            // Hiển thị từ ở vùng kho (khi bấm sẽ chọn lên trên và phát âm từ đó)
+            // Hiển thị từ trong kho
             const selectedIds = new Set(selectedWords.map(w => w.id));
+
             allTokensForQuestion.forEach((word) => {
                 const isSelected = selectedIds.has(word.id);
                 const btn = document.createElement('button');
-                
-                if (isSelected) {
+
+                if (isAnswerCorrect) {
+                    btn.className = "word-btn bg-gray-100 text-gray-300 font-bold px-4 py-2 rounded-2xl border-2 border-gray-200 text-lg opacity-40 cursor-not-allowed";
+                    btn.disabled = true;
+                } else if (isSelected) {
                     btn.className = "word-btn bg-gray-100 text-gray-300 font-bold px-4 py-2 rounded-2xl border-2 border-gray-200 text-lg opacity-40 cursor-not-allowed";
                     btn.disabled = true;
                 } else {
                     btn.className = "word-btn pop-in bg-white hover:bg-gray-50 text-gray-800 font-bold px-4 py-2 rounded-2xl shadow border-2 border-gray-200 transition text-lg border-b-4 active:border-b-2 cursor-pointer";
+
                     btn.onclick = () => {
                         speakWord(word.text);
                         selectWord(word);
                     };
                 }
+
                 btn.textContent = word.text;
                 optionsZone.appendChild(btn);
             });
@@ -332,6 +356,15 @@
             totalAnswered++;
 
             if (userStr === targetStr) {
+                isAnswerCorrect = true;
+
+                // Khóa nút Làm lại
+                const resetBtn = document.getElementById('reset-btn');
+                resetBtn.disabled = true;
+                resetBtn.classList.add('opacity-40', 'cursor-not-allowed');
+
+                // Khóa toàn bộ từ đã chọn và từ trong kho
+                renderWords();
                 score += 10;
                 correctCount++;
                 streak++;

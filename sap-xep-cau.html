@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSK 1 - Sắp xếp câu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/01-mau-cau-chao-hoi.js"></script>
+    <script src="js/02-mau-cau-gioi-thieu.js"></script>
+    <script src="js/03-mau-cau-gia-dinh.js"></script>
+    <script src="js/04-mau-cau-thoi-gian.js"></script>
+    <script src="js/05-mau-cau-an-uong.js"></script>
+    <script src="js/06-mau-cau-mua-sam.js"></script>
+    <script src="js/07-mau-cau-dia-diem-va-hoi-duong.js"></script>
+    <script src="js/08-mau-cau-hoc-tap-va-cong-viec.js"></script>
+    <script src="js/09-mau-cau-thoi-tiet-va-cam-giac.js"></script>
+    <script src="js/10-mau-cau-giao-tiep-hang-ngay-khac.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .pop-in {
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .btn-shadow {
+            box-shadow: 0 4px 0 0 rgba(0, 0, 0, 0.1);
+        }
+        .btn-shadow:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen p-4">
+
+    <div class="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col">
+        <!-- Header Banner -->
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white text-left">
+            <h1 class="text-2xl font-bold flex items-center gap-2">
+                <span>🇨🇳</span> HSK 1 · Sắp xếp câu
+            </h1>
+            <p class="text-sm text-blue-100 mt-1 opacity-90">
+                Đọc nghĩa tiếng Việt – ghép từ tiếng Trung thành câu hoàn chỉnh
+            </p>
+        </div>
+
+        <div class="p-5 flex-1 flex flex-col gap-5">
+            <!-- Stats Bar -->
+            <div class="grid grid-cols-3 gap-3">
+                <div class="border-2 border-gray-100 rounded-2xl p-3 text-center bg-gray-50/50">
+                    <div class="text-xs text-gray-500 font-semibold">Điểm số</div>
+                    <div id="score" class="text-xl font-bold text-gray-800">0</div>
+                </div>
+                <div class="border-2 border-gray-100 rounded-2xl p-3 text-center bg-gray-50/50">
+                    <div class="text-xs text-gray-500 font-semibold">Trả lời đúng</div>
+                    <div id="correct-count" class="text-xl font-bold text-gray-800">0</div>
+                </div>
+                <div class="border-2 border-gray-100 rounded-2xl p-3 text-center bg-gray-50/50">
+                    <div class="text-xs text-gray-500 font-semibold">Chuỗi đúng</div>
+                    <div id="streak" class="text-xl font-bold text-gray-800">0</div>
+                </div>
+            </div>
+
+            <!-- Progress Bar Info -->
+            <div class="flex justify-between items-center text-sm font-bold text-gray-600 px-1">
+                <span id="question-index">Câu 1 / 100</span>
+                <span id="accuracy">Chính xác: 0%</span>
+            </div>
+            <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden -mt-3">
+                <div id="progress-bar" class="bg-blue-600 h-full w-0 transition-all duration-300"></div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-blue-50/60 border border-blue-100 rounded-3xl p-6 text-center flex flex-col items-center gap-2">
+                <span class="text-xs font-bold tracking-wider text-blue-600 bg-blue-100 px-3 py-1 rounded-full uppercase">NGHĨA TIẾNG VIỆT</span>
+                <div id="meaning-vn" class="text-2xl font-black text-gray-800 my-1">...</div>
+                <div id="pinyin-text" class="text-sm font-semibold text-gray-500 mb-1"></div>
+                <button onclick="playAudio()" class="text-blue-600 hover:text-blue-700 font-bold text-sm flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-blue-100/50 transition">
+                    <i class="fa-solid fa-volume-high"></i> Nghe câu mẫu
+                </button>
+            </div>
+
+            <!-- User Answer Zone -->
+            <div>
+                <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-1">CÂU TRẢ LỜI CỦA BẠN</div>
+                <div id="answer-zone" class="min-h-[70px] border-2 border-dashed border-gray-300 rounded-2xl p-3 flex flex-wrap gap-2 items-center transition-all bg-gray-50/30">
+                    <span class="text-gray-400 text-sm italic w-full text-center pointer-events-none" id="placeholder-hint">Nhấp vào từ bên dưới để ghép câu</span>
+                </div>
+            </div>
+
+            <!-- Word Options Zone -->
+            <div class="flex-1">
+                <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-1">CHỌN CÁC TỪ BÊN DƯỚI</div>
+                <div id="options-zone" class="flex flex-wrap gap-2 min-h-[70px]"></div>
+            </div>
+
+            <!-- Status Alert -->
+            <div id="status-message" class="hidden p-3 rounded-xl text-center text-sm font-bold pop-in"></div>
+
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-3 gap-3">
+                <button onclick="resetAnswer()" class="col-span-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3.5 px-4 rounded-2xl transition btn-shadow">
+                    Làm lại
+                </button>
+                <button id="check-btn" onclick="checkAnswer()" class="col-span-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-2xl transition btn-shadow">
+                    Kiểm tra đáp án
+                </button>
+            </div>
+
+            <div class="text-center text-xs text-gray-400 mt-1 flex justify-between px-1">
+                <span>Ôn tập mẫu câu HSK 1</span>
+                <span>Chủ đề: Chào hỏi</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const TAT_CA_MAU_CAU = [MAU_CAU_CHAO_HOI, MAU_CAU_GIOI_THIEU, MAU_CAU_GIA_DINH, MAU_CAU_THOI_GIAN, MAU_CAU_AN_UONG, MAU_CAU_MUA_SAM, MAU_CAU_DIA_DIEM_VA_HOI_DUONG, MAU_CAU_HOC_TAP_VA_CONG_VIEC, MAU_CAU_THOI_TIET_VA_CAM_GIAC, MAU_CAU_GIAO_TIEP_HANG_NGAY_KHAC].flat();
+        let currentIndex = 0;
+        let score = 0;
+        let correctCount = 0;
+        let streak = 0;
+        let totalAnswered = 0;
+
+        let selectedWords = [];
+        let availableWords = [];
+
+        function initGame() {
+            loadQuestion(currentIndex);
+        }
+
+        function tokenize(text) {
+            // Tách các ký tự Hán ngữ và giữ dấu câu đi kèm chữ liền kề
+            const tokens = [];
+            let currentToken = "";
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (char === ' ') continue;
+                if (/[\u4e00-\u9fa5]/.test(char)) {
+                    if (currentToken !== "") {
+                        tokens.push(currentToken);
+                    }
+                    currentToken = char;
+                } else {
+                    currentToken += char;
+                }
+            }
+            if (currentToken !== "") {
+                tokens.push(currentToken);
+            }
+            return tokens;
+        }
+
+        function shuffle(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function loadQuestion(index) {
+            const item = TAT_CA_MAU_CAU[index];
+            document.getElementById('meaning-vn').textContent = item[2];
+            document.getElementById('pinyin-text').textContent = item[1];
+            document.getElementById('question-index').textContent = `Câu ${index + 1} / ${TAT_CA_MAU_CAU.length}`;
+            
+            const progressPct = ((index) / TAT_CA_MAU_CAU.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPct}%`;
+
+            const tokens = tokenize(item[0]);
+            availableWords = shuffle(tokens.map((text, id) => ({ id: `${index}-${id}-${text}`, text })));
+            selectedWords = [];
+
+            document.getElementById('status-message').className = "hidden";
+            document.getElementById('check-btn').disabled = false;
+            document.getElementById('check-btn').innerText = "Kiểm tra đáp án";
+            document.getElementById('check-btn').onclick = checkAnswer;
+
+            renderWords();
+        }
+
+        function renderWords() {
+            const answerZone = document.getElementById('answer-zone');
+            const optionsZone = document.getElementById('options-zone');
+            const placeholder = document.getElementById('placeholder-hint');
+
+            answerZone.querySelectorAll('.word-btn').forEach(el => el.remove());
+            optionsZone.innerHTML = '';
+
+            if (selectedWords.length === 0) {
+                placeholder.classList.remove('hidden');
+            } else {
+                placeholder.classList.add('hidden');
+            }
+
+            selectedWords.forEach((word) => {
+                const btn = document.createElement('button');
+                btn.className = "word-btn pop-in bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded-2xl shadow transition text-lg border-b-2 border-blue-700";
+                btn.textContent = word.text;
+                btn.onclick = () => deselectWord(word);
+                answerZone.appendChild(btn);
+            });
+
+            availableWords.forEach((word) => {
+                const btn = document.createElement('button');
+                btn.className = "word-btn pop-in bg-white hover:bg-gray-50 text-gray-800 font-bold px-4 py-2 rounded-2xl shadow border-2 border-gray-200 transition text-lg border-b-4 active:border-b-2";
+                btn.textContent = word.text;
+                btn.onclick = () => selectWord(word);
+                optionsZone.appendChild(btn);
+            });
+        }
+
+        function selectWord(word) {
+            availableWords = availableWords.filter(w => w.id !== word.id);
+            selectedWords.push(word);
+            renderWords();
+        }
+
+        function deselectWord(word) {
+            selectedWords = selectedWords.filter(w => w.id !== word.id);
+            availableWords.push(word);
+            renderWords();
+        }
+
+        function resetAnswer() {
+            if (selectedWords.length === 0) return;
+            availableWords = availableWords.concat(selectedWords);
+            selectedWords = [];
+            renderWords();
+        }
+
+        function playAudio() {
+            const text = TAT_CA_MAU_CAU[currentIndex][0];
+            const fileName = TAT_CA_MAU_CAU[currentIndex][3];
+            
+            const audio = new Audio(fileName);
+            audio.play().catch(() => {
+                // Fallback bằng Web Speech API nếu không tìm thấy file audio mp3
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'zh-CN';
+                    utterance.rate = 0.85;
+                    window.speechSynthesis.speak(utterance);
+                }
+            });
+        }
+
+        function checkAnswer() {
+            const userStr = selectedWords.map(w => w.text).join('');
+            const targetStr = TAT_CA_MAU_CAU[currentIndex][0];
+
+            const statusEl = document.getElementById('status-message');
+            totalAnswered++;
+
+            if (userStr === targetStr) {
+                score += 10;
+                correctCount++;
+                streak++;
+                
+                statusEl.className = "p-3 rounded-2xl text-center text-sm font-bold pop-in bg-emerald-100 text-emerald-800 border border-emerald-200";
+                statusEl.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Chính xác! Tuyệt vời!`;
+                playAudio();
+            } else {
+                streak = 0;
+                statusEl.className = "p-3 rounded-2xl text-center text-sm font-bold pop-in bg-rose-100 text-rose-800 border border-rose-200";
+                statusEl.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> Chưa chính xác. Đáp án đúng: <span class="font-black">${targetStr}</span>`;
+            }
+
+            document.getElementById('score').textContent = score;
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('streak').textContent = streak;
+            
+            const acc = Math.round((correctCount / totalAnswered) * 100);
+            document.getElementById('accuracy').textContent = `Chính xác: ${acc}%`;
+
+            const checkBtn = document.getElementById('check-btn');
+            checkBtn.innerText = "Câu tiếp theo";
+            checkBtn.onclick = nextQuestion;
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex >= TAT_CA_MAU_CAU.length) {
+                alert(`Bạn đã hoàn thành tất cả ${TAT_CA_MAU_CAU.length} câu! Tổng điểm: ${score}`);
+                currentIndex = 0;
+                score = 0;
+                correctCount = 0;
+                streak = 0;
+                totalAnswered = 0;
+            }
+            loadQuestion(currentIndex);
+        }
+
+        window.onload = initGame;
+    </script>
+</body>
+</html>

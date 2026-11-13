@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HSK 1 - Sắp xếp câu</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="js/01-mau-cau-chao-hoi.js"></script>
     <script src="js/02-mau-cau-gioi-thieu.js"></script>
@@ -15,7 +16,7 @@
     <script src="js/08-mau-cau-hoc-tap-va-cong-viec.js"></script>
     <script src="js/09-mau-cau-thoi-tiet-va-cam-giac.js"></script>
     <script src="js/10-mau-cau-giao-tiep-hang-ngay-khac.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
         body {
@@ -141,8 +142,45 @@
         let allTokensForQuestion = []; 
         let selectedWords = [];
         let isAnswerCorrect = false;
+        let answerSortable = null;
 
         function initGame() {
+            // Chỉ khởi tạo SortableJS một lần
+            const answerZone = document.getElementById('answer-zone');
+
+            answerSortable = new Sortable(answerZone, {
+                animation: 150,
+
+                // Chỉ cho phép kéo các từ trong vùng câu trả lời
+                draggable: '.word-btn',
+
+                // Hiệu ứng khi kéo
+                ghostClass: 'sortable-ghost',
+                chosenClass: 'sortable-chosen',
+                dragClass: 'sortable-drag',
+
+                // Hỗ trợ thao tác trên điện thoại
+                delay: 150,
+                delayOnTouchOnly: true,
+                touchStartThreshold: 4,
+
+                // Không cho kéo khi đã trả lời đúng
+                onMove: function () {
+                    return !isAnswerCorrect;
+                },
+
+                // Đồng bộ thứ tự sau khi kéo thả
+                onEnd: function () {
+                    const wordIds = Array.from(
+                        answerZone.querySelectorAll('.word-btn')
+                    ).map(el => el.dataset.wordId);
+
+                    selectedWords = wordIds
+                        .map(id => selectedWords.find(word => word.id === id))
+                        .filter(Boolean);
+                }
+            });
+
             startNewGameSession();
         }
 
@@ -270,6 +308,9 @@
             // Hiển thị từ đã chọn
             selectedWords.forEach((word) => {
                 const btn = document.createElement('button');
+                
+                // Lưu ID để SortableJS đồng bộ thứ tự từ
+                btn.dataset.wordId = word.id;
 
                 btn.className = `word-btn ${
                     isAnswerCorrect
@@ -298,7 +339,14 @@
                 const btn = document.createElement('button');
 
                 if (isAnswerCorrect) {
-                    btn.className = "word-btn bg-gray-100 text-gray-300 font-bold px-4 py-2 rounded-2xl border-2 border-gray-200 text-lg opacity-40 cursor-not-allowed";
+                    if (isSelected) {
+                        // Từ đã chọn: giữ nguyên trạng thái mờ
+                        btn.className = "word-btn bg-gray-100 text-gray-300 font-bold px-4 py-2 rounded-2xl border-2 border-gray-200 text-lg opacity-40 cursor-not-allowed";
+                    } else {
+                        // Từ chưa chọn: giữ màu chữ rõ ràng
+                        btn.className = "word-btn bg-white text-gray-800 font-bold px-4 py-2 rounded-2xl border-2 border-gray-200 text-lg opacity-100 cursor-not-allowed";
+                    }
+
                     btn.disabled = true;
                 } else if (isSelected) {
                     btn.className = "word-btn bg-gray-100 text-gray-300 font-bold px-4 py-2 rounded-2xl border-2 border-gray-200 text-lg opacity-40 cursor-not-allowed";
@@ -315,6 +363,12 @@
                 btn.textContent = word.text;
                 optionsZone.appendChild(btn);
             });
+
+            // Khóa kéo thả khi trả lời đúng
+            if (answerSortable) {
+                answerSortable.option('disabled', isAnswerCorrect);
+            }
+            
         }
 
         function selectWord(word) {

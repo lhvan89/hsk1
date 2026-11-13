@@ -37,6 +37,41 @@
             transform: translateY(2px);
             box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.1);
         }
+
+        /* Từ đang được chọn để kéo
+        .sortable-chosen {
+            opacity: 0.85;
+            cursor: grabbing !important;
+        } */
+
+        /* Vô hiệu hóa thao tác cuộn trên chính các thẻ từ */
+        #answer-zone .word-btn {
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        /* Bản sao đang được cầm */
+        .drag-floating {
+            opacity: 1 !important;
+            background: white !important;
+            color: #1f2937 !important;
+            border: 2px solid #3b82f6 !important;
+            border-radius: 16px !important;
+            box-shadow:
+                0 12px 25px rgba(0, 0, 0, 0.25),
+                0 4px 10px rgba(59, 130, 246, 0.2) !important;
+            transform: scale(1.08) rotate(2deg);
+            pointer-events: none !important;
+        }
+
+        /* Vị trí gốc của từ đang kéo */
+        .drag-placeholder {
+            opacity: 0.2 !important;
+            border: 2px dashed #3b82f6 !important;
+            background: #bfdbfe !important;
+        }
     </style>
 </head>
 <body class="flex justify-center items-center min-h-screen p-4">
@@ -90,7 +125,7 @@
 
             <!-- User Answer Zone -->
             <div>
-                <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-1">CÂU TRẢ LỜI CỦA BẠN</div>
+                <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-1">CÂU TRẢ LỜI CỦA BẠN (Có hỗ trợ kéo thả từ)</div>
                 <div id="answer-zone" class="min-h-[70px] border-2 border-dashed border-gray-300 rounded-2xl p-3 flex flex-wrap gap-2 items-center transition-all bg-gray-50/30">
                     <span class="text-gray-400 text-sm italic w-full text-center pointer-events-none" id="placeholder-hint">Nhấp vào từ bên dưới để ghép câu</span>
                 </div>
@@ -145,32 +180,142 @@
         let answerSortable = null;
 
         function initGame() {
-            // Chỉ khởi tạo SortableJS một lần
             const answerZone = document.getElementById('answer-zone');
 
-            answerSortable = new Sortable(answerZone, {
-                animation: 150,
+            // Không sử dụng SortableJS nữa để tránh xung đột touch
+            if (answerSortable) {
+                answerSortable.destroy();
+                answerSortable = null;
+            }
 
-                // Chỉ cho phép kéo các từ trong vùng câu trả lời
-                draggable: '.word-btn',
+            let dragState = null;
+            let suppressNextClick = false;
 
-                // Hiệu ứng khi kéo
-                ghostClass: 'sortable-ghost',
-                chosenClass: 'sortable-chosen',
-                dragClass: 'sortable-drag',
+            // Chặn click phát sinh sau khi vừa kéo thả
+            answerZone.addEventListener('click', function (e) {
+                if (suppressNextClick) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    suppressNextClick = false;
+                }
+            }, true);
 
-                // Hỗ trợ thao tác trên điện thoại
-                delay: 150,
-                delayOnTouchOnly: true,
-                touchStartThreshold: 4,
+            // Bắt đầu chạm hoặc nhấn chuột vào từ
+            answerZone.addEventListener('pointerdown', function (e) {
+                const btn = e.target.closest('.word-btn');
 
-                // Không cho kéo khi đã trả lời đúng
-                onMove: function () {
-                    return !isAnswerCorrect;
-                },
+                if (!btn || isAnswerCorrect || btn.disabled) return;
 
-                // Đồng bộ thứ tự sau khi kéo thả
-                onEnd: function () {
+                // Chỉ dùng chuột trái hoặc thao tác cảm ứng
+                if (e.pointerType === 'mouse' && e.button !== 0) return;
+
+                const rect = btn.getBoundingClientRect();
+
+                dragState = {
+                    btn,
+                    pointerId: e.pointerId,
+                    startX: e.clientX,
+                    startY: e.clientY,
+                    offsetX: e.clientX - rect.left,
+                    offsetY: e.clientY - rect.top,
+                    dragging: false,
+                    clone: null
+                };
+            });
+
+            // Di chuyển ngón tay hoặc chuột
+            document.addEventListener('pointermove', function (e) {
+                if (!dragState || e.pointerId !== dragState.pointerId) return;
+
+                const dx = e.clientX - dragState.startX;
+                const dy = e.clientY - dragState.startY;
+
+                // Chỉ bắt đầu kéo khi di chuyển đủ xa
+                if (!dragState.dragging) {
+                    if (Math.hypot(dx, dy) < 6) return;
+
+                    dragState.dragging = true;
+
+                    const btn = dragState.btn;
+                    const rect = btn.getBoundingClientRect();
+
+                    // Tạo bản sao nổi để đi theo ngón tay
+                    const clone = btn.cloneNode(true);
+
+                    clone.classList.add('drag-floating');
+
+                    clone.style.position = 'fixed';
+                    clone.style.left = rect.left + 'px';
+                    clone.style.top = rect.top + 'px';
+                    clone.style.width = rect.width + 'px';
+                    clone.style.height = rect.height + 'px';
+                    clone.style.margin = '0';
+                    clone.style.zIndex = '999999';
+                    clone.style.pointerEvents = 'none';
+
+                    document.body.appendChild(clone);
+
+                    dragState.clone = clone;
+
+                    // Làm mờ từ gốc để tạo cảm giác đã nhấc lên
+                    btn.classList.add('drag-placeholder');
+                }
+
+                e.preventDefault();
+
+                // Cập nhật vị trí bản sao theo ngón tay hoặc chuột
+                const clone = dragState.clone;
+
+                clone.style.left =
+                    (e.clientX - dragState.offsetX) + 'px';
+
+                clone.style.top =
+                    (e.clientY - dragState.offsetY) + 'px';
+
+                // Xác định từ đang nằm dưới vị trí ngón tay
+                const element = document.elementFromPoint(
+                    e.clientX,
+                    e.clientY
+                );
+
+                const target = element?.closest('#answer-zone .word-btn');
+
+                if (!target || target === dragState.btn) return;
+
+                const rect = target.getBoundingClientRect();
+
+                // Xác định kéo đến trước hay sau từ đích
+                const sameRow =
+                    Math.abs(e.clientY - (rect.top + rect.height / 2))
+                    < rect.height / 2;
+
+                const insertAfter = sameRow
+                    ? e.clientX > rect.left + rect.width / 2
+                    : e.clientY > rect.top + rect.height / 2;
+
+                if (insertAfter) {
+                    target.after(dragState.btn);
+                } else {
+                    target.before(dragState.btn);
+                }
+            }, { passive: false });
+
+            // Kết thúc kéo thả
+            function finishDrag(e) {
+                if (!dragState || e.pointerId !== dragState.pointerId) return;
+
+                const state = dragState;
+                dragState = null;
+
+                if (state.dragging) {
+                    // Xóa bản sao đang nổi
+                    state.clone?.remove();
+
+                    // Bỏ trạng thái giữ chỗ
+                    state.btn.classList.remove('drag-placeholder');
+
+                    // Đồng bộ thứ tự vào mảng dữ liệu
                     const wordIds = Array.from(
                         answerZone.querySelectorAll('.word-btn')
                     ).map(el => el.dataset.wordId);
@@ -178,8 +323,18 @@
                     selectedWords = wordIds
                         .map(id => selectedWords.find(word => word.id === id))
                         .filter(Boolean);
+
+                    // Không để sự kiện click sau kéo làm mất từ
+                    suppressNextClick = true;
+
+                    setTimeout(() => {
+                        suppressNextClick = false;
+                    }, 500);
                 }
-            });
+            }
+
+            document.addEventListener('pointerup', finishDrag);
+            document.addEventListener('pointercancel', finishDrag);
 
             startNewGameSession();
         }
@@ -368,7 +523,7 @@
             if (answerSortable) {
                 answerSortable.option('disabled', isAnswerCorrect);
             }
-            
+
         }
 
         function selectWord(word) {

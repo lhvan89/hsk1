@@ -1,0 +1,688 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Điền từ vào chỗ trống - HSK 1</title>
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 15px;
+    background: #f3f5f9;
+    font-family: Arial, sans-serif;
+    color: #263238;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* HEADER */
+.header {
+    background: #2563eb;
+    color: white;
+    padding: 22px 20px;
+    border-radius: 18px 18px 0 0;
+}
+
+.header h2 {
+    margin: 0 0 7px;
+    font-size: 21px;
+}
+
+.header p {
+    margin: 0;
+    font-size: 13px;
+    opacity: .9;
+}
+
+/* MAIN */
+.main {
+    background: white;
+    padding: 22px 18px;
+    border-radius: 0 0 18px 18px;
+    min-height: 430px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 10px;
+}
+
+.progress {
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 28px;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0;
+    background: #2563eb;
+    transition: width .3s;
+}
+
+.question-label {
+    text-align: center;
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 18px;
+}
+
+.chinese {
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+    line-height: 1.8;
+    min-height: 65px;
+    word-break: break-word;
+}
+
+.blank {
+    display: inline-block;
+    min-width: 65px;
+    border-bottom: 3px solid #2563eb;
+    color: #2563eb;
+    padding: 0 5px;
+}
+
+.pinyin {
+    text-align: center;
+    font-size: 16px;
+    color: #64748b;
+    margin-top: 8px;
+}
+
+.translation {
+    text-align: center;
+    font-size: 15px;
+    color: #475569;
+    margin-top: 12px;
+}
+
+.input-label {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 35px 0 10px;
+}
+
+.answer-input {
+    width: 100%;
+    padding: 15px;
+    font-size: 20px;
+    text-align: center;
+    border: 2px solid #dbe2ea;
+    border-radius: 12px;
+    outline: none;
+    transition: .2s;
+}
+
+.answer-input:focus {
+    border-color: #2563eb;
+}
+
+.answer-input.correct {
+    border-color: #16a34a;
+    background: #f0fdf4;
+}
+
+.answer-input.wrong {
+    border-color: #dc2626;
+    background: #fef2f2;
+}
+
+.feedback {
+    display: none;
+    margin-top: 15px;
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.feedback.correct {
+    display: block;
+    background: #f0fdf4;
+    color: #15803d;
+}
+
+.feedback.wrong {
+    display: block;
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+button {
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.check-btn {
+    background: #2563eb;
+    color: white;
+    flex: 1;
+}
+
+.next-btn {
+    background: #16a34a;
+    color: white;
+    flex: 1;
+    display: none;
+}
+
+button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat strong {
+    display: block;
+    font-size: 22px;
+    margin-bottom: 5px;
+}
+
+.stat span {
+    color: #64748b;
+    font-size: 12px;
+}
+
+.result {
+    display: none;
+    text-align: center;
+    padding: 35px 10px;
+}
+
+.result h2 {
+    font-size: 26px;
+    color: #2563eb;
+}
+
+.result-score {
+    font-size: 42px;
+    font-weight: bold;
+    margin: 20px;
+}
+
+.restart-btn {
+    background: #2563eb;
+    color: white;
+    width: 100%;
+    margin-top: 20px;
+}
+
+@media(max-width: 400px) {
+    .chinese {
+        font-size: 26px;
+    }
+
+    .main {
+        padding: 20px 14px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="header">
+        <h2>✍️ Điền từ vào chỗ trống</h2>
+        <p>Luyện tập mẫu câu tiếng Trung HSK 1</p>
+    </header>
+
+    <main class="main">
+
+        <div id="game">
+
+            <div class="progress-info">
+                <span id="questionNumber">Câu 1/10</span>
+                <span id="progressPercent">0%</span>
+            </div>
+
+            <div class="progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <div class="question-label">
+                Hãy nhập từ còn thiếu trong câu sau
+            </div>
+
+            <div class="chinese" id="chineseSentence"></div>
+
+            <div class="pinyin" id="pinyinSentence"></div>
+
+            <div class="translation" id="translation"></div>
+
+            <label class="input-label">
+                Nhập từ tiếng Trung còn thiếu:
+            </label>
+
+            <input
+                type="text"
+                id="answer"
+                class="answer-input"
+                placeholder="Nhập đáp án..."
+                autocomplete="off"
+            >
+
+            <div class="feedback" id="feedback"></div>
+
+            <div class="buttons">
+                <button class="check-btn" id="checkBtn"
+                    onclick="checkAnswer()">
+                    Kiểm tra
+                </button>
+
+                <button class="next-btn" id="nextBtn"
+                    onclick="nextQuestion()">
+                    Câu tiếp theo →
+                </button>
+            </div>
+
+            <div class="stats">
+                <div class="stat">
+                    <strong id="correctCount">0</strong>
+                    <span>Trả lời đúng</span>
+                </div>
+
+                <div class="stat">
+                    <strong id="wrongCount">0</strong>
+                    <span>Trả lời sai</span>
+                </div>
+
+                <div class="stat">
+                    <strong id="totalCount">0</strong>
+                    <span>Đã hoàn thành</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="result" id="result">
+            <div style="font-size:55px">🎉</div>
+            <h2>Hoàn thành!</h2>
+            <p>Bạn đã hoàn thành lượt luyện tập.</p>
+            <div class="result-score" id="finalScore">0/10</div>
+            <p id="finalMessage"></p>
+
+            <button class="restart-btn" onclick="restartGame()">
+                🔄 Luyện tập lại
+            </button>
+        </div>
+
+    </main>
+</div>
+
+<!-- Nạp dữ liệu mẫu câu -->
+<script src="js/01-mau-cau-chao-hoi.js"></script>
+
+<script>
+// ===============================
+// CẤU HÌNH GAME
+// ===============================
+
+const QUESTIONS_PER_GAME = 10;
+
+// ===============================
+// LẤY DỮ LIỆU
+// ===============================
+
+function getSourceData() {
+    if (typeof MAU_CAU_CHAO_HOI !== "undefined") {
+        return MAU_CAU_CHAO_HOI;
+    }
+
+    if (window.MAU_CAU_CHAO_HOI) {
+        return window.MAU_CAU_CHAO_HOI;
+    }
+
+    return [];
+}
+
+const sourceData = getSourceData();
+
+// ===============================
+// TẠO CÂU HỎI
+// ===============================
+
+// Lưu ý: Phiên bản này tự động chọn một đoạn
+// 1-2 chữ Hán liên tiếp để làm chỗ trống.
+// Muốn khuyết đúng một từ vựng hoàn chỉnh,
+// nên bổ sung ranh giới từ trong dữ liệu.
+
+function createQuestion(item) {
+    const chinese = item[0];
+    const pinyin = item[1];
+    const vietnamese = item[2];
+
+    // Tách các cụm chữ Hán, bỏ qua dấu câu
+    const matches = [...chinese.matchAll(
+        /[\u4e00-\u9fff]+/g
+    )];
+
+    if (!matches.length) return null;
+
+    // Ưu tiên cụm có ít nhất 2 chữ Hán
+    const candidates = matches.filter(
+        m => m[0].length >= 2
+    );
+
+    const group = candidates.length
+        ? candidates[Math.floor(Math.random() * candidates.length)]
+        : matches[Math.floor(Math.random() * matches.length)];
+
+    const length = group[0].length >= 2 ? 2 : 1;
+
+    const start = Math.floor(
+        Math.random() * (group[0].length - length + 1)
+    );
+
+    const answer = group[0].substring(
+        start, start + length
+    );
+
+    const blankPosition = group.index + start;
+
+    const displayChinese =
+        chinese.substring(0, blankPosition) +
+        "___" +
+        chinese.substring(blankPosition + length);
+
+    return {
+        chinese,
+        displayChinese,
+        pinyin,
+        vietnamese,
+        answer
+    };
+}
+
+// ===============================
+// TRỘN DỮ LIỆU
+// ===============================
+
+function shuffle(array) {
+    const result = [...array];
+
+    for (let i = result.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+    }
+
+    return result;
+}
+
+// ===============================
+// BIẾN GAME
+// ===============================
+
+let questions = [];
+let currentIndex = 0;
+let correct = 0;
+let wrong = 0;
+let answered = false;
+
+// ===============================
+// KHỞI TẠO GAME
+// ===============================
+
+function startGame() {
+    if (!Array.isArray(sourceData) || !sourceData.length) {
+        document.getElementById("chineseSentence").textContent =
+            "Không tìm thấy dữ liệu mẫu câu!";
+
+        document.getElementById("pinyinSentence").textContent =
+            "Hãy kiểm tra tên biến trong file JS.";
+
+        document.getElementById("answer").disabled = true;
+        document.getElementById("checkBtn").disabled = true;
+        return;
+    }
+
+    const validData = sourceData.filter(
+        item => Array.isArray(item) && item.length >= 3
+    );
+
+    questions = shuffle(validData)
+        .slice(0, QUESTIONS_PER_GAME)
+        .map(createQuestion)
+        .filter(Boolean);
+
+    currentIndex = 0;
+    correct = 0;
+    wrong = 0;
+
+    document.getElementById("game").style.display = "block";
+    document.getElementById("result").style.display = "none";
+
+    updateStats();
+    showQuestion();
+}
+
+// ===============================
+// HIỂN THỊ CÂU HỎI
+// ===============================
+
+function showQuestion() {
+    answered = false;
+
+    const q = questions[currentIndex];
+
+    const display = q.displayChinese.replace(
+        "___",
+        '<span class="blank">？</span>'
+    );
+
+    document.getElementById("chineseSentence").innerHTML = display;
+
+    document.getElementById("pinyinSentence").textContent =
+        q.pinyin;
+
+    document.getElementById("translation").textContent =
+        q.vietnamese;
+
+    document.getElementById("answer").value = "";
+    document.getElementById("answer").disabled = false;
+    document.getElementById("answer").className = "answer-input";
+
+    document.getElementById("feedback").className = "feedback";
+    document.getElementById("feedback").style.display = "none";
+
+    document.getElementById("checkBtn").style.display = "block";
+    document.getElementById("checkBtn").disabled = false;
+
+    document.getElementById("nextBtn").style.display = "none";
+
+    document.getElementById("questionNumber").textContent =
+        `Câu ${currentIndex + 1}/${questions.length}`;
+
+    const percent = Math.round(
+        currentIndex / questions.length * 100
+    );
+
+    document.getElementById("progressPercent").textContent =
+        percent + "%";
+
+    document.getElementById("progressBar").style.width =
+        percent + "%";
+
+    document.getElementById("answer").focus();
+}
+
+// ===============================
+// KIỂM TRA ĐÁP ÁN
+// ===============================
+
+function checkAnswer() {
+    if (answered) return;
+
+    const input = document.getElementById("answer");
+    const userAnswer = input.value.trim();
+    const q = questions[currentIndex];
+
+    if (!userAnswer) {
+        input.focus();
+        return;
+    }
+
+    answered = true;
+
+    const isCorrect = userAnswer === q.answer;
+
+    const feedback = document.getElementById("feedback");
+
+    if (isCorrect) {
+        correct++;
+
+        input.classList.add("correct");
+
+        feedback.className = "feedback correct";
+        feedback.innerHTML =
+            "✓ Chính xác! Bạn đã trả lời đúng.";
+
+    } else {
+        wrong++;
+
+        input.classList.add("wrong");
+
+        feedback.className = "feedback wrong";
+        feedback.innerHTML =
+            `✗ Chưa chính xác!<br>
+             Đáp án đúng: <strong>${q.answer}</strong>`;
+    }
+
+    feedback.style.display = "block";
+
+    // Hiển thị đáp án trong câu
+    document.getElementById("chineseSentence").innerHTML =
+        q.displayChinese.replace(
+            "___",
+            `<span class="blank">${q.answer}</span>`
+        );
+
+    input.disabled = true;
+
+    document.getElementById("checkBtn").style.display = "none";
+    document.getElementById("nextBtn").style.display = "block";
+
+    document.getElementById("nextBtn").textContent =
+        currentIndex === questions.length - 1
+            ? "Xem kết quả →"
+            : "Câu tiếp theo →";
+
+    updateStats();
+}
+
+// ===============================
+// CÂU TIẾP THEO
+// ===============================
+
+function nextQuestion() {
+    currentIndex++;
+
+    if (currentIndex >= questions.length) {
+        finishGame();
+    } else {
+        showQuestion();
+    }
+}
+
+// ===============================
+// THỐNG KÊ
+// ===============================
+
+function updateStats() {
+    document.getElementById("correctCount").textContent = correct;
+    document.getElementById("wrongCount").textContent = wrong;
+    document.getElementById("totalCount").textContent =
+        correct + wrong;
+}
+
+// ===============================
+// KẾT THÚC
+// ===============================
+
+function finishGame() {
+    document.getElementById("game").style.display = "none";
+    document.getElementById("result").style.display = "block";
+
+    const total = questions.length;
+
+    document.getElementById("finalScore").textContent =
+        `${correct}/${total}`;
+
+    document.getElementById("finalMessage").textContent =
+        correct === total
+            ? "Xuất sắc! Bạn đã trả lời đúng tất cả."
+            : correct >= total / 2
+                ? "Làm tốt lắm! Hãy tiếp tục luyện tập nhé."
+                : "Hãy ôn tập thêm từ vựng và thử lại nhé.";
+
+    document.getElementById("progressBar").style.width = "100%";
+    document.getElementById("progressPercent").textContent = "100%";
+}
+
+// ===============================
+// CHƠI LẠI
+// ===============================
+
+function restartGame() {
+    startGame();
+}
+
+// Nhấn Enter để kiểm tra hoặc sang câu tiếp theo
+document.getElementById("answer").addEventListener(
+    "keydown",
+    function(e) {
+        if (e.key === "Enter") {
+            if (answered) {
+                nextQuestion();
+            } else {
+                checkAnswer();
+            }
+        }
+    }
+);
+
+// Bắt đầu
+startGame();
+
+</script>
+
+</body>
+</html>

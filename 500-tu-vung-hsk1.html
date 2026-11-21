@@ -330,10 +330,10 @@
         container.innerHTML = wordsList.map((word) => `
             <div class="word-card" id="card-${word.id}">
                 <div class="word-content">
-                    <div class="index">Mẫu câu ${word.id}</div>
+                    <div class="index">Từ ${word.id}</div>
                     <div class="zh">${word.zh}</div>
                     <div class="pinyin">${word.pinyin}</div>
-                    <div class="vi">${word.vi}</div>
+                    <div class="vi">${word.vi}（${word.en}）</div>
                 </div>
                 <button class="audio-btn" onclick="playAudio('${word.audioUrl}', document.getElementById('card-${word.id}'))">
                     🔊 Nghe

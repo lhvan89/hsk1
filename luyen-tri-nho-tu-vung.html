@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -8,6 +7,9 @@
 
 <!-- Dùng chung dữ liệu từ vựng của website -->
 <script src="js/500-words-hsk1.js"></script>
+
+<!-- Thư viện Hanzi Writer -->
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
 
 <style>
 :root {
@@ -135,12 +137,44 @@ main {
   font-weight: bold;
 }
 
+.meaning-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 18px 0 10px;
+  flex-wrap: wrap;
+}
+
 .meaning {
   font-size: 30px;
   font-weight: 750;
-  margin: 18px 0 10px;
+  margin: 0;
   color: #172554;
   overflow-wrap: anywhere;
+}
+
+.icon-btn {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border-radius: 50%;
+  background: #e0eaff;
+  color: #1d4ed8;
+  font-size: 19px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon-btn:hover {
+  background: #c7d9ff;
+}
+
+.icon-btn.playing {
+  background: #2563eb;
+  color: #fff;
 }
 
 .hint {
@@ -330,6 +364,158 @@ button:active {
   font-size: 18px;
 }
 
+/* POPUP TẬP VIẾT HANZI WRITER */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 1000;
+}
+
+.modal-backdrop.show {
+  display: flex;
+}
+
+.modal {
+  width: min(460px, 100%);
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.3);
+  padding: 20px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 18px;
+  color: var(--dark);
+}
+
+.close-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 10px;
+  background: #f1f5f9;
+  color: #334155;
+  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  background: #e2e8f0;
+}
+
+.modal-meta {
+  text-align: center;
+  margin-bottom: 12px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.modal-meta strong {
+  color: var(--dark);
+  font-size: 16px;
+}
+
+.char-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.char-tab {
+  min-width: 42px;
+  height: 42px;
+  padding: 0 12px;
+  border-radius: 10px;
+  background: #eef2ff;
+  color: #3730a3;
+  font-size: 18px;
+}
+
+.char-tab.active {
+  background: var(--blue);
+  color: #fff;
+}
+
+.writer-stage {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+#hanziTarget {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  border: 2px solid #cbd5e1;
+  border-radius: 16px;
+  background: #fafcff;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#grid-background-target {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transition: opacity .15s;
+}
+
+#grid-background-target.hidden {
+  opacity: 0;
+}
+
+#hanziWriterMount {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.writer-status {
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+  min-height: 20px;
+  margin-bottom: 12px;
+}
+
+.modal-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.modal-actions button {
+  padding: 10px 8px;
+  font-size: 13px;
+}
+
 footer {
   text-align: center;
   color: #94a3b8;
@@ -340,6 +526,21 @@ footer {
 @media(max-width:520px) {
   .meaning {
     font-size: 25px;
+  }
+
+  .icon-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 17px;
+  }
+
+  #hanziTarget {
+    width: 190px;
+    height: 190px;
+  }
+
+  .modal-actions {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   main {
@@ -417,7 +618,23 @@ footer {
 
         <span class="tag">DỊCH SANG TIẾNG TRUNG</span>
 
-        <div class="meaning" id="meaning">Đang tải...</div>
+        <div class="meaning-row">
+          <div class="meaning" id="meaning">Đang tải...</div>
+          <button
+            type="button"
+            class="icon-btn"
+            id="audioBtn"
+            title="Nghe phát âm"
+            aria-label="Nghe phát âm"
+          >🔊</button>
+          <button
+            type="button"
+            class="icon-btn"
+            id="writeBtn"
+            title="Luyện viết chữ Hán"
+            aria-label="Luyện viết chữ Hán"
+          >✏️</button>
+        </div>
 
         <div class="hint" id="hint">
           Hãy nhập từ tiếng Trung tương ứng
@@ -485,7 +702,54 @@ footer {
 
 </div>
 
+<!-- POPUP TẬP VIẾT HANZI WRITER -->
+<div class="modal-backdrop" id="writeModal" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modalTitle">✍️ Luyện viết chữ Hán</h3>
+      <button type="button" class="close-btn" id="closeModalBtn" aria-label="Đóng">×</button>
+    </div>
+
+    <div class="modal-meta" id="modalMeta"></div>
+
+    <div class="char-tabs" id="charTabs"></div>
+
+    <div class="writer-stage">
+      <div id="hanziTarget">
+        <svg id="grid-background-target" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <line x1="0" y1="0" x2="100" y2="100" stroke="#cbd5e1" stroke-width="0.8" stroke-dasharray="3,3" />
+          <line x1="100" y1="0" x2="0" y2="100" stroke="#cbd5e1" stroke-width="0.8" stroke-dasharray="3,3" />
+          <line x1="50" y1="0" x2="50" y2="100" stroke="#cbd5e1" stroke-width="0.8" stroke-dasharray="3,3" />
+          <line x1="0" y1="50" x2="100" y2="50" stroke="#cbd5e1" stroke-width="0.8" stroke-dasharray="3,3" />
+        </svg>
+        <div id="hanziWriterMount"></div>
+      </div>
+    </div>
+
+    <div class="writer-status" id="writerStatus">Tô theo nét trên khung để luyện viết</div>
+
+    <div class="modal-actions">
+      <button type="button" class="secondary" id="animateBtn">▶ Xem nét</button>
+      <button type="button" class="primary" id="quizBtn">✍️ Tập viết lại</button>
+      <button type="button" class="secondary" id="outlineBtn">👁 Ẩn/Hiện nét mờ</button>
+      <button type="button" class="secondary" id="gridBtn">⊞ Ẩn/Hiện ô lưới</button>
+      <button type="button" class="secondary" id="modalAudioBtn">🔊 Nghe âm</button>
+    </div>
+  </div>
+</div>
+
 <script>
+
+const ALL_WORDS = Array.isArray(words)
+  ? words.map(([zh, pinyin, vi, en, audioUrl], index) => ({
+      id: index + 1,
+      zh,
+      pinyin,
+      vi,
+      en,
+      audioUrl: audioUrl ? `audio/words/${audioUrl}` : ""
+    }))
+  : [];
 
 const TOTAL_QUESTIONS = 20;
 
@@ -503,20 +767,22 @@ let answered = false;
 let wrongWords = [];
 let hintUsed = false;
 
+let activeAudio = null;
+let writerInstance = null;
+let outlineVisible = true;
+let gridVisible = true;
+let modalChars = [];
+let activeCharIndex = 0;
+
 const $ = id => document.getElementById(id);
 
-// Lấy dữ liệu từ file từ vựng chung
+// Lấy dữ liệu từ mảng object ALL_WORDS
 function getVocabulary() {
-  if (typeof words === "undefined" || !Array.isArray(words)) {
-    return [];
-  }
-
-  return words.filter(item =>
-    Array.isArray(item) &&
-    item.length >= 3 &&
-    item[0] &&
-    item[1] &&
-    item[2]
+  return ALL_WORDS.filter(item =>
+    item &&
+    typeof item.zh === "string" && item.zh.trim() &&
+    typeof item.pinyin === "string" && item.pinyin.trim() &&
+    typeof item.vi === "string" && item.vi.trim()
   );
 }
 
@@ -532,16 +798,221 @@ function shuffle(array) {
   return result;
 }
 
+function setAudioPlaying(isPlaying) {
+  const btn = $("audioBtn");
+  if (!btn) return;
+  btn.classList.toggle("playing", isPlaying);
+}
+
+function stopCurrentAudio() {
+  if (activeAudio) {
+    activeAudio.pause();
+    activeAudio.currentTime = 0;
+    activeAudio = null;
+  }
+  if ("speechSynthesis" in window) {
+    window.speechSynthesis.cancel();
+  }
+  setAudioPlaying(false);
+}
+
+function speakChineseFallback(zhText) {
+  if (!("speechSynthesis" in window) || !zhText) {
+    setAudioPlaying(false);
+    return;
+  }
+
+  const cleanText = String(zhText).split(/[｜|]/)[0].trim();
+  const utterance = new SpeechSynthesisUtterance(cleanText);
+  utterance.lang = "zh-CN";
+  utterance.rate = 0.9;
+
+  utterance.onstart = () => setAudioPlaying(true);
+  utterance.onend = () => setAudioPlaying(false);
+  utterance.onerror = () => setAudioPlaying(false);
+
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
+}
+
+function playWordAudio(word) {
+  if (!word) return;
+
+  stopCurrentAudio();
+
+  if (!word.audioUrl) {
+    speakChineseFallback(word.zh);
+    return;
+  }
+
+  const audio = new Audio(word.audioUrl);
+  activeAudio = audio;
+
+  audio.addEventListener("play", () => {
+    if (activeAudio === audio) {
+      setAudioPlaying(true);
+    }
+  });
+
+  audio.addEventListener("ended", () => {
+    if (activeAudio === audio) {
+      activeAudio = null;
+      setAudioPlaying(false);
+    }
+  });
+
+  audio.addEventListener("error", () => {
+    if (activeAudio === audio) {
+      activeAudio = null;
+      speakChineseFallback(word.zh);
+    }
+  });
+
+  audio.play().catch(() => {
+    if (activeAudio === audio) {
+      activeAudio = null;
+      speakChineseFallback(word.zh);
+    }
+  });
+}
+
+// Trích xuất các ký tự chữ Hán để tập viết
+function extractChineseChars(zhText) {
+  const primaryForm = String(zhText || "").split(/[｜|]/)[0];
+  const matches = primaryForm.match(/[\u4e00-\u9fff]/g);
+  if (matches && matches.length > 0) {
+    return matches;
+  }
+  return primaryForm.trim().split("").filter(Boolean);
+}
+
+function getWriterSize() {
+  return window.innerWidth <= 520 ? 190 : 220;
+}
+
+function updateGridVisibility() {
+  const gridEl = $("grid-background-target");
+  if (!gridEl) return;
+  gridEl.classList.toggle("hidden", !gridVisible);
+}
+
+function destroyWriter() {
+  $("hanziWriterMount").innerHTML = "";
+  writerInstance = null;
+}
+
+function initWriterForChar(ch) {
+  destroyWriter();
+
+  if (typeof HanziWriter === "undefined") {
+    $("writerStatus").textContent = "Không tải được thư viện Hanzi Writer.";
+    return;
+  }
+
+  const size = getWriterSize();
+
+  try {
+    writerInstance = HanziWriter.create("hanziWriterMount", ch, {
+      width: size,
+      height: size,
+      padding: 14,
+      showOutline: outlineVisible,
+      strokeAnimationSpeed: 1,
+      delayBetweenStrokes: 250,
+      strokeColor: "#172554",
+      outlineColor: "#cbd5e1",
+      drawingColor: "#2563eb",
+      drawingWidth: 16
+    });
+
+    startWriterQuiz();
+  } catch (err) {
+    $("writerStatus").textContent = `Không hỗ trợ tập viết cho ký tự "${ch}".`;
+  }
+}
+
+function startWriterQuiz() {
+  if (!writerInstance) return;
+  const ch = modalChars[activeCharIndex] || "";
+  $("writerStatus").textContent = `Đang tập viết chữ "${ch}"...`;
+
+  writerInstance.quiz({
+    onMistake: function(strokeData) {
+      $("writerStatus").textContent =
+        `Chưa đúng nét (${strokeData.mistakesOnStroke} lần sai ở nét ${strokeData.strokeNum + 1}). Thử lại nhé!`;
+    },
+    onCorrectStroke: function(strokeData) {
+      $("writerStatus").textContent =
+        `Đúng nét ${strokeData.strokeNum + 1}/${strokeData.totalStrokes}!`;
+    },
+    onComplete: function(summaryData) {
+      $("writerStatus").textContent =
+        `Hoàn thành chữ "${ch}"! (${summaryData.totalMistakes} nét sai)`;
+    }
+  });
+}
+
+function renderCharTabs() {
+  const tabsEl = $("charTabs");
+  tabsEl.innerHTML = "";
+
+  modalChars.forEach((ch, idx) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "char-tab" + (idx === activeCharIndex ? " active" : "");
+    btn.textContent = ch;
+    btn.addEventListener("click", () => {
+      activeCharIndex = idx;
+      renderCharTabs();
+      initWriterForChar(modalChars[activeCharIndex]);
+    });
+    tabsEl.appendChild(btn);
+  });
+}
+
+function openWriteModal(word) {
+  if (!word) return;
+
+  modalChars = extractChineseChars(word.zh);
+  if (modalChars.length === 0) return;
+
+  activeCharIndex = 0;
+  outlineVisible = true;
+  gridVisible = true;
+  updateGridVisibility();
+
+  $("modalMeta").innerHTML = `
+    <strong>${escapeHTML(word.zh)}</strong> · ${escapeHTML(word.pinyin)}<br>
+    Nghĩa: ${escapeHTML(word.vi)}
+  `;
+
+  renderCharTabs();
+  $("writeModal").classList.add("show");
+  $("writeModal").setAttribute("aria-hidden", "false");
+
+  initWriterForChar(modalChars[activeCharIndex]);
+}
+
+function closeWriteModal() {
+  $("writeModal").classList.remove("show");
+  $("writeModal").setAttribute("aria-hidden", "true");
+  destroyWriter();
+}
+
 // Bắt đầu trò chơi
 function startGame() {
+  stopCurrentAudio();
+  closeWriteModal();
   const vocabulary = getVocabulary();
 
   if (vocabulary.length === 0) {
     $("meaning").textContent = "Không tải được dữ liệu từ vựng";
     $("hint").textContent =
-      "Hãy kiểm tra đường dẫn js/300-words-hsk1.js";
+      "Hãy kiểm tra dữ liệu words hoặc đường dẫn file từ vựng";
     $("answerInput").disabled = true;
     $("checkBtn").disabled = true;
+    $("audioBtn").disabled = true;
+    $("writeBtn").disabled = true;
     return;
   }
 
@@ -560,6 +1031,8 @@ function startGame() {
 
   $("gameArea").style.display = "block";
   $("resultArea").style.display = "none";
+  $("audioBtn").disabled = false;
+  $("writeBtn").disabled = false;
 
   updateStats();
   renderQuestion();
@@ -567,6 +1040,9 @@ function startGame() {
 
 // Hiển thị câu hỏi
 function renderQuestion() {
+  stopCurrentAudio();
+  closeWriteModal();
+
   if (currentIndex >= questionList.length) {
     finishGame();
     return;
@@ -576,7 +1052,7 @@ function renderQuestion() {
   answered = false;
   hintUsed = false;
 
-  $("meaning").textContent = currentWord[2];
+  $("meaning").textContent = currentWord.vi;
   $("hint").textContent = "Hãy nhập từ tiếng Trung tương ứng";
 
   $("answerInput").value = "";
@@ -623,7 +1099,7 @@ function checkAnswer() {
 
   answered = true;
 
-  const correctAnswer = String(currentWord[0]).trim();
+  const correctAnswer = String(currentWord.zh).trim();
   const isCorrect = userAnswer === correctAnswer;
 
   $("answerInput").disabled = true;
@@ -647,11 +1123,11 @@ function checkAnswer() {
     $("feedback").className = "feedback show good";
     $("feedback").innerHTML = `
       <b>✓ Chính xác! Tuyệt vời!</b><br>
-      <span class="correct-word">${correctAnswer}</span>
+      <span class="correct-word">${escapeHTML(correctAnswer)}</span>
       <br>
-      Pinyin: ${currentWord[1]}
+      Pinyin: ${escapeHTML(currentWord.pinyin)}
       <br>
-      Nghĩa: ${currentWord[2]}
+      Nghĩa: ${escapeHTML(currentWord.vi)}
       <br>
       +${hintUsed ? 5 : 10} điểm
     `;
@@ -674,11 +1150,11 @@ function checkAnswer() {
       <br>
       Đáp án đúng:
       <br>
-      <span class="correct-word">${correctAnswer}</span>
+      <span class="correct-word">${escapeHTML(correctAnswer)}</span>
       <br>
-      Pinyin: ${currentWord[1]}
+      Pinyin: ${escapeHTML(currentWord.pinyin)}
       <br>
-      Nghĩa: ${currentWord[2]}
+      Nghĩa: ${escapeHTML(currentWord.vi)}
     `;
   }
 
@@ -738,11 +1214,11 @@ function skipQuestion() {
     <b>Đã bỏ qua câu hỏi.</b><br>
     Đáp án đúng:
     <br>
-    <span class="correct-word">${currentWord[0]}</span>
+    <span class="correct-word">${escapeHTML(currentWord.zh)}</span>
     <br>
-    Pinyin: ${currentWord[1]}
+    Pinyin: ${escapeHTML(currentWord.pinyin)}
     <br>
-    Nghĩa: ${currentWord[2]}
+    Nghĩa: ${escapeHTML(currentWord.vi)}
   `;
 
   answered = true;
@@ -759,7 +1235,7 @@ function showHint() {
 
   hintUsed = true;
 
-  $("hint").textContent = `💡 Pinyin: ${currentWord[1]}`;
+  $("hint").textContent = `💡 Pinyin: ${currentWord.pinyin}`;
 
   $("hintBtn").disabled = true;
   $("hintBtn").style.opacity = ".45";
@@ -767,6 +1243,8 @@ function showHint() {
 
 // Kết thúc trò chơi
 function finishGame() {
+  stopCurrentAudio();
+  closeWriteModal();
   $("gameArea").style.display = "none";
   $("resultArea").style.display = "block";
 
@@ -818,10 +1296,10 @@ function renderReview() {
     html += `
       <div class="review-item">
         ${index + 1}.
-        <b>${escapeHTML(word[0])}</b>
-        &nbsp; ${escapeHTML(word[1])}
+        <b>${escapeHTML(word.zh)}</b>
+        &nbsp; ${escapeHTML(word.pinyin)}
         <br>
-        Nghĩa: ${escapeHTML(word[2])}
+        Nghĩa: ${escapeHTML(word.vi)}
         <br>
         Bạn nhập: ${escapeHTML(item.answer)}
       </div>
@@ -834,6 +1312,45 @@ function renderReview() {
 }
 
 // Sự kiện nút
+$("audioBtn").addEventListener("click", () => playWordAudio(currentWord));
+$("writeBtn").addEventListener("click", () => openWriteModal(currentWord));
+$("closeModalBtn").addEventListener("click", closeWriteModal);
+$("writeModal").addEventListener("click", event => {
+  if (event.target === $("writeModal")) {
+    closeWriteModal();
+  }
+});
+
+$("animateBtn").addEventListener("click", () => {
+  if (!writerInstance) return;
+  const ch = modalChars[activeCharIndex] || "";
+  $("writerStatus").textContent = `Đang hiển thị thứ tự nét chữ "${ch}"...`;
+  writerInstance.animateCharacter({
+    onComplete: () => {
+      startWriterQuiz();
+    }
+  });
+});
+
+$("quizBtn").addEventListener("click", startWriterQuiz);
+
+$("outlineBtn").addEventListener("click", () => {
+  if (!writerInstance) return;
+  outlineVisible = !outlineVisible;
+  if (outlineVisible) {
+    writerInstance.showOutline();
+  } else {
+    writerInstance.hideOutline();
+  }
+});
+
+$("gridBtn").addEventListener("click", () => {
+  gridVisible = !gridVisible;
+  updateGridVisibility();
+});
+
+$("modalAudioBtn").addEventListener("click", () => playWordAudio(currentWord));
+
 $("checkBtn").addEventListener("click", checkAnswer);
 $("nextBtn").addEventListener("click", nextQuestion);
 $("skipBtn").addEventListener("click", skipQuestion);
@@ -848,6 +1365,12 @@ $("answerInput").addEventListener("keydown", event => {
     } else {
       checkAnswer();
     }
+  }
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && $("writeModal").classList.contains("show")) {
+    closeWriteModal();
   }
 });
 
